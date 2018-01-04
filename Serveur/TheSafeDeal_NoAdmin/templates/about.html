@@ -1,29 +1,7 @@
+{% extends "base.html" %}
 {% load staticfiles %}
-<!DOCTYPE html>
-<html>
+{% block content %}
 
-<head>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="{% static 'css/login.css' %}" />
-        <title>Connexion</title>
-</head>
+<p> Coucou </p>
 
-<body>
-
-<ul>
-  <li><img src="{% static 'img/logo.jpg' %}" title="Deal With It"></li>
-  <li><a href="{% url 'home' %}">Accueil</a></li>
-  <li><a href="{% url 'about' %}">Qui sommes nous ?</a></li>
-  <li style="float:right"><a class="active" href="{% url 'login' %}">Se Connecter</a></li>
-</ul>
-
-
-
-
-
-
-<div class="footer">
-  <p>#ISEN2017</p>
-</div>
-
-</html>
+{% endblock %}
