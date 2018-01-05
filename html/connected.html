@@ -3,9 +3,10 @@
 
 <head>
         <meta charset="utf-8" />
-        <link rel="stylesheet" href="../css/login.css" />
+        <link rel="stylesheet" href="../css/connected.css" />
         <title>Project</title>
         <script type="text/javascript" src="../javascript/display_form.js"></script>
+        <script type="text/javascript" src="../javascript/refresh.js"></script>
 </head>
 
 <body>
@@ -17,9 +18,94 @@
   <li style="float:right;padding-right: 5px"><a class="active" href="./login.html">Se Connecter</a></li>
 </ul>
 
+<div style="background-color: white;height: auto;padding-left: 30px;padding-top: 20px">
+	<img src="../img/new_project.jpg" class="new_project" onclick="display_form()"/>
+</div>
 
-<img src="../img/new_project.jpg" class="new_project" onclick="display_form()"/>
+<div class="projet">
+	<img src="../img/waiting_project.jpg" class="waiting_project"/>
+	<table>
+		<tr>
+	     <td></td>
+	     <th>Client</th>
+	     <th>Prestataire</th>
+	     <th>Professionnel</th>
+	     <th>Prix (€)</th>
+	     <th>Début</th>
+	     <th>Fin estimée</th>
+	    </tr>
+		<tr>
+	     <th title="Ce projet a pour but de .........">Titre1</th>
+	     <td>Mr Dupond</td>
+	     <td>XXXXXXXXXX</td>
+	     <td>XXXXXXXXXX</td>
+	     <td>23000</td>
+	     <td>03/11/2018</td>
+	     <td>04/05/2019</td>
+	     <td><a href="#"><img src="../img/accepter.jpg"/></a></td>
+	     <td><a href="#"><img src="../img/refuser.jpg"/></a></td>
+	    </tr>
+	    <tr>
+	     <th title="Ceci est un projet visant à .........">Titre2</th>
+	     <td>Mr Barnabé</td>
+	     <td>XXXXXXXXXXXX</td>
+	     <td>XXXXXXXX</td>
+	     <td>11111</td>
+	     <td>02/01/2018</td>
+	     <td>15/08/2018</td>
+	     <td><a href="#"><img src="../img/accepter.jpg"/></a></td>
+	     <td><a href="#"><img src="../img/refuser.jpg"/></a></td>
+	    </tr>
 
+	</table>
+</div>
+
+
+
+<div class="projet">
+	<img src="../img/your_projects.jpg" class="waiting_project"/>
+
+	<table>
+		<tr>
+	     <td></td>
+	     <th>Client</th>
+	     <th>Prestataire</th>
+	     <th>Professionnel</th>
+	     <th>Prix (€)</th>
+	     <th>Début</th>
+	     <th>Fin estimée</th>
+	     <th>Avancée</th>
+	    </tr>
+		<tr>
+	     <th title="Ce projet a pour but de .........">Titre1</th>
+	     <td>Mr Dupond</td>
+	     <td>XXXXXXXXXX</td>
+	     <td>XXXXXXXXXX</td>
+	     <td>23000</td>
+	     <td>03/11/2018</td>
+	     <td>04/05/2019</td>
+	     <td>50%</td>
+	     <td><a href="../projets/746465465" target="_blank"><img src="../img/open.jpg" title="Ouvrir la page du projet" class="open"/></a></td>
+	
+	    </tr>
+	    <tr>
+	     <th title="Ceci est un projet visant à .........">Titre2</th>
+	     <td>Mr Barnabé</td>
+	     <td>XXXXXXXXXXXX</td>
+	     <td>XXXXXXXX</td>
+	     <td>11111</td>
+	     <td>02/01/2018</td>
+	     <td>15/08/2018</td>
+		 <td>3%</td>
+		 <td><a href="../projets/285323872" target="_blank"><img src="../img/open.jpg" title="Ouvrir la page du projet" class="open"/></a></td>
+	    </tr>
+
+	</table>
+</div>
+
+<br />
+
+<!-- CI DESSOUS LE CADRE A AFFICHER POUR CREER UN NOUVEAU PROJET -->
 
 <div id="id01" class="modal">
   
@@ -37,6 +123,14 @@
 
       <label><b>Professionnel</b></label>
       <input type="text" placeholder="Entrer le nom du Professionnel" name="professionnel" required>
+
+      <label><b>Description</b></label>
+      <input type="text" placeholder="Décrivez le but du projet..." name="description" style="padding-bottom: 30px" required>
+
+	  <label><b>Prix (€)</b></label>
+      <input type="number" step="8" value="1" min="0" style="margin-bottom: 10px" required>
+
+      <br />
 
       <label><b>Date de début</b></label>
       <input type="date" name="date_debut" required>

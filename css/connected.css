@@ -61,9 +61,10 @@ li img {
 table {
     border-collapse: collapse;
     width: auto;
-    right: 30px;
-    position: absolute;
+    position: relative;
     margin-top: 30px;
+    margin-left: 18%;
+    margin-bottom: 30px
 }
 
 
@@ -80,12 +81,8 @@ th {
     color: white;
 }
 
-
-.projet {
-    background-color: white;
-    height: auto; 
-    margin-left:32%;
-    margin-top: 20px;
+.active {
+    background-color: #4CAF50;
 }
 
 .animate {
@@ -127,7 +124,7 @@ th {
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    padding-top: 60px;
+    padding-top: 0px;
 }
 
 .modal-content {
@@ -144,10 +141,22 @@ th {
     cursor: pointer;
 }
 
+.open{
+    cursor: pointer;
+}
+
+.projet {
+    background-color: white;
+    height: auto; 
+    margin-top: 20px;
+    width: 100%
+}
+
 .waiting_project {
     position: relative;
     width: 420px;
     height: auto;
+    margin-left: 32%;
 }
 
 
@@ -165,10 +174,6 @@ th {
    color: white;
    text-align: center;
    height: 30px;
-}
-
-.active {
-    background-color: #4CAF50;
 }
 
 .text_end_form a {
