@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-
 {% block content %}
 
 <form method="post" class="modal-content animate">
@@ -8,8 +7,11 @@
     <div class="container">
 	{% for field in form %}
       <label><b>{{ field.label_tag }}</b></label>
+	  {{ field }}
     {% endfor %}  
-      <button type="submit" value="Connexion" />
+    <button type="submit"/>Se Connecter</button>
     </div>
+	<div class="text_end_form"><a href="{% url 'register' %}">Vous n'avez pas de compte ?</a></div>
 </form>
+
 {% endblock %}
