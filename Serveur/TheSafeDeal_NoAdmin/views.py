@@ -11,16 +11,12 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
-<<<<<<< HEAD
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django import forms
-
-
-=======
 from django.contrib.auth import get_user_model
 from .models import CustomUser
->>>>>>> 536f2232ad39b252400c2fe23a41a9af3c08e5ac
+
 
 # Create your views here.
 
@@ -81,28 +77,34 @@ def connected(request):
             new_project.key = get_random_string(length=32)
             new_project.date_debut = timezone.now()
 
-            if User.objects.filter(email = cleaned_info['prestataire']).exists() and User.objects.filter(email = cleaned_info['professionnel']).exists():
+            if CustomUser.objects.filter(email = cleaned_info['prestataire']).exists() and CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
                 if cleaned_info['client'] == '':
                     new_project.save()
-                    pre = UserProfile.objects.get(email = cleaned_info['prestataire'])
+                    pre = CustomUser.objects.get(email = cleaned_info['prestataire'])
                     pre.add_project(new_project.key)
                     pre.save()
-                    pro = UserProfile.objects.get(email = cleaned_info['professionnel'])
+                    pro = CustomUser.objects.get(email = cleaned_info['professionnel'])
                     pro.add_project(new_project.key)
                     pro.save()
-                else:
-                    if User.objects.filter(email = cleaned_info['client']).exists():
+                else: #RECREER FONCTIONS PROJETS
+                    if CustomUser.objects.filter(email = cleaned_info['client']).exists():
                         new_project.save()
-                        UserProfile.objects.filter(email = cleaned_info['prestataire']).add_project(new_project.key)
-                        UserProfile.objects.filter(email = cleaned_info['professionnel']).add_project(new_project.key)
-                        UserProfile.objects.filter(email = cleaned_info['client']).add_project(new_project.key)
+                        pre = CustomUser.objects.get(email = cleaned_info['prestataire'])
+                        pre.add_project(new_project.key)
+                        pre.save()
+                        pro = CustomUser.objects.get(email = cleaned_info['professionnel'])
+                        pro.add_project(new_project.key)
+                        pro.save()
+                        cli = CustomUser.objects.get(email = cleaned_info['client'])
+                        cli.add_project(new_project.key)
+                        cli.save()
                     else:
                         error = "Le Client n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
                         return render(request, 'connected.html',{'form':form, 'error': error})
             else:
-                if not User.objects.filter(email = cleaned_info['prestataire']).exists():
+                if not CustomUser.objects.filter(email = cleaned_info['prestataire']).exists():
                     error = "Le Prestataire n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
-                elif not User.objects.filter(email = cleaned_info['professionnel']).exists():
+                elif not CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
                     error = "Le Professionnel n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
                 return render(request, 'connected.html',{'form':form, 'error': error})
     else:

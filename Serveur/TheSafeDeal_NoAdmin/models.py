@@ -13,8 +13,18 @@ TYPE_USER = (
 
 class CustomUser(AbstractUser):
     typeUser = models.CharField(max_length=30, choices=TYPE_USER,null=False, blank=False)
-
+    projet = models.CharField(max_length=32, blank=True)
     
+    def add_project(self, clé_projet):
+    	self.projet = self.projet + clé_projet +";"
+
+    def delete_projet(self, clé_projet):
+    	self.projet = self.projet.replace(clé_projet+";","")
+
+    def get_projects_list(self):
+    	return self.projet.split(str=';')
+
+
 class Projet(models.Model):
 	titre = models.CharField(max_length=200)
 	key = models.CharField(max_length=32, unique=True)
