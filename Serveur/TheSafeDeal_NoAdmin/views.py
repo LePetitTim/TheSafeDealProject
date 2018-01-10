@@ -10,6 +10,8 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
+from django.contrib.auth import get_user_model
+from .models import CustomUser
 
 # Create your views here.
 
@@ -17,7 +19,8 @@ def about(request):
     return render(request, 'about.html', {})
 
 def home(request):
-    return render(request, 'home.html', {})
+    customUser = CustomUser.objects.all()
+    return render(request, 'home.html', {'CustomUser' : customUser})
 
 def register(request):
     if request.method == 'POST':
@@ -47,6 +50,7 @@ def register(request):
 def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
+        User = get_user_model()
         user = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
