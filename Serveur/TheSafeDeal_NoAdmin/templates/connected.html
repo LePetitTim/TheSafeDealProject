@@ -29,26 +29,24 @@
 {% if form.errors %}
     {% for field in form %}
         {% for error in field.errors %}
-            <div class="alert alert-danger">
                 <strong>{{ error|escape }}</strong>
-            </div>
         {% endfor %}
     {% endfor %}
     {% for error in form.non_field_errors %}
-        <div class="alert alert-danger">
             <strong>{{ error|escape }}</strong>
-        </div>
     {% endfor %}
 {% endif %}
 
 {% if error %}
-<p>{{ error }} </p>
+<strong>{{ error }} </strong>
 {% endif %}
 
 <div style="background-color: white;height: auto;padding-left: 30px;padding-top: 20px">
 	<img src="{% static 'img/new_project.jpg' %}" class="new_project" onclick="display_form()"/>
 </div>
 
+{% if unvalidated_projects|length != 0 %}
+<hr>
 <div class="projet">
 	<img src="{% static 'img/waiting_project.jpg' %}" class="waiting_project"/>
 	<table>
@@ -62,33 +60,26 @@
 	     <th>Fin estimée</th>
 	    </tr>
 		<tr>
-	     <th title="Ce projet a pour but de .........">Titre1</th>
-	     <td>Mr Dupond</td>
-	     <td>XXXXXXXXXX</td>
-	     <td>XXXXXXXXXX</td>
-	     <td>23000</td>
-	     <td>03/11/2018</td>
-	     <td>04/05/2019</td>
-	     <td><a href="#"><img src="{% static 'img/accepter.jpg' %}"/></a></td>
-	     <td><a href="#"><img src="{% static 'img/refuser.jpg' %}"/></a></td>
+		{% for projet in unvalidated_projects %}
+    		<th title={{ projet.description }}>{{ projet.titre }}</th>
+	     	<td>{{ projet.client }}</td>
+	     	<td>{{ projet.prestataire }}</td>
+	     	<td>{{ projet.professionnel }}</td>
+	     	<td>{{ projet.prix }}</td>
+	     	<td>{{ projet.date_debut|date:"d M Y" }}</td>
+	     	<td>{{ projet.date_fin|date:"d M Y" }}</td>
+	     	<td><a href="#"><img src="{% static 'img/accepter.jpg' %}"/></a></td>
+	     	<td><a href="#"><img src="{% static 'img/refuser.jpg' %}"/></a></td>
 	    </tr>
-	    <tr>
-	     <th title="Ceci est un projet visant à .........">Titre2</th>
-	     <td>Mr Barnabé</td>
-	     <td>XXXXXXXXXXXX</td>
-	     <td>XXXXXXXX</td>
-	     <td>11111</td>
-	     <td>02/01/2018</td>
-	     <td>15/08/2018</td>
-	     <td><a href="#"><img src="{% static 'img/accepter.jpg' %}"/></a></td>
-	     <td><a href="#"><img src="{% static 'img/refuser.jpg' %}"/></a></td>
-	    </tr>
-
+		{% endfor %}
+	     
 	</table>
 </div>
+{% endif %}
 
+
+{% if validated_projects|length != 0 %}
 <hr>
-
 <div class="projet">
 	<img src="{% static 'img/your_projects.jpg' %}" class="waiting_project"/>
 
@@ -101,36 +92,26 @@
 	     <th>Prix (€)</th>
 	     <th>Début</th>
 	     <th>Fin estimée</th>
-	     <th>Avancée</th>
 	    </tr>
+		
+		{% for projet in validated_projects %}
 		<tr>
-	     <th title="Ce projet a pour but de .........">Titre1</th>
-	     <td>Mr Dupond</td>
-	     <td>XXXXXXXXXX</td>
-	     <td>XXXXXXXXXX</td>
-	     <td>23000</td>
-	     <td>03/11/2018</td>
-	     <td>04/05/2019</td>
-	     <td>50%</td>
-	     <td><a href="../projets/746465465" target="_blank"><img src="{% static 'img/open.jpg' %}" title="Ouvrir la page du projet" class="open"/></a></td>
-	
-	    </tr>
-	    <tr>
-	     <th title="Ceci est un projet visant à .........">Titre2</th>
-	     <td>Mr Barnabé</td>
-	     <td>XXXXXXXXXXXX</td>
-	     <td>XXXXXXXX</td>
-	     <td>11111</td>
-	     <td>02/01/2018</td>
-	     <td>15/08/2018</td>
-		 <td>3%</td>
-		 <td><a href="../projets/285323872" target="_blank"><img src="{% static 'img/open.jpg' %}" title="Ouvrir la page du projet" class="open"/></a></td>
-	    </tr>
+	     <th title={{ projet.description }}>{{ projet.titre }}</th>
+	     <td>{{ projet.client }}</td>
+	     <td>{{ projet.prestataire }}</td>
+	     <td>{{ projet.professionnel }}</td>
+	     <td>{{ projet.prix }}</td>
+	     <td>{{ projet.date_debut|date:"d M Y" }}</td>
+	     <td>{{ projet.date_fin|date:"d M Y" }}</td>
+	     <td><a href="../projets/{{ projet.key }}" target="_blank"><img src="{% static 'img/open.jpg' %}" title="Ouvrir la page du projet" class="open"/></a>
+	     </td>
+	    {% endfor %}
 
 	</table>
 </div>
 
 <br />
+{% endif %}
 
 <!-- CI DESSOUS LE CADRE A AFFICHER POUR CREER UN NOUVEAU PROJET -->
 
