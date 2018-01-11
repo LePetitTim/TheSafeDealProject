@@ -76,6 +76,9 @@
 	</table>
 </div>
 {% endif %}
+{% if unvalidated_projects|length == 0 %}
+<strong>Vous n'avez aucun projet en attente de validation</strong>
+{% endif %}
 
 
 {% if validated_projects|length != 0 %}
@@ -111,6 +114,9 @@
 </div>
 
 <br />
+{% endif %}
+{% if validated_projects|length == 0 %}
+<strong>Vous n'avez aucun projet</strong>
 {% endif %}
 
 <!-- CI DESSOUS LE CADRE A AFFICHER POUR CREER UN NOUVEAU PROJET -->
