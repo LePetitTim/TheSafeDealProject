@@ -19,7 +19,6 @@ class SignupForm(UserCreationForm):
             'username' : forms.TextInput(attrs = {'placeholder': 'Entrer Username'}),
             'password2' : forms.PasswordInput(attrs = {'placeholder': 'Répéter Mot de Passe'}),}
 
-
 class NewProjectForm(forms.ModelForm):
 	class Meta:
 		model = Projet
