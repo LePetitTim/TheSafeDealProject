@@ -1,1 +1,2 @@
-__pycache__
+TheSafeDeal/__pycache__
+TheSafeDeal_NoAdmin/__pycache__
