@@ -109,7 +109,7 @@
 	     <td>{{ projet.prix }}</td>
 	     <td>{{ projet.date_debut|date:"d M Y" }}</td>
 	     <td>{{ projet.date_fin|date:"d M Y" }}</td>
-	     <td><a href="../projets/{{ projet.key }}" target="_blank"><img src="{% static 'img/open.jpg' %}" title="Ouvrir la page du projet" class="open"/></a>
+	     <td><a href="../project/{{ projet.key }}" target="_blank"><img src="{% static 'img/open.jpg' %}" title="Ouvrir la page du projet" class="open"/></a>
 	     </td>
 	    {% endfor %}
 
