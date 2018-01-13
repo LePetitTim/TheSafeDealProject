@@ -37,16 +37,17 @@
     {% endfor %}
 {% endif %}
 
-{% if error %}
-<strong>{{ error }} </strong>
-{% endif %}
-
 <div style="background-color: white;height: auto;padding-left: 30px;padding-top: 20px">
 	<img src="{% static 'img/new_project.jpg' %}" class="new_project" onclick="display_form()"/>
 </div>
+<center>
+{% if error %}
+<strong>{{ error }}</strong></center>
+{% endif %}
 
 {% if unvalidated_projects|length != 0 %}
 <hr>
+<center>
 <div class="projet">
 	<img src="{% static 'img/waiting_project.jpg' %}" class="waiting_project"/>
 	<table>
@@ -75,9 +76,11 @@
 	     
 	</table>
 </div>
+
 {% endif %}
 {% if unvalidated_projects|length == 0 %}
-<strong>Vous n'avez aucun projet en attente de validation</strong>
+<br />
+<strong>Vous n'avez aucun projet en attente de validation.</strong>
 {% endif %}
 
 
@@ -116,8 +119,10 @@
 <br />
 {% endif %}
 {% if validated_projects|length == 0 %}
-<strong>Vous n'avez aucun projet</strong>
+<br />
+<strong>Vous n'avez aucun projet en cours.</strong>
 {% endif %}
+</center>
 
 <!-- CI DESSOUS LE CADRE A AFFICHER POUR CREER UN NOUVEAU PROJET -->
 
@@ -130,14 +135,14 @@
       <label><b>Titre du projet</b></label>
       <input type="text" placeholder="Entrer le Titre" name="titre" required>
 
-      <label><b>Client (Optionnel)</b></label>
-      <input type="email" placeholder="Entrer l'adresse email du Client" name="client">
-
-      <label><b>Prestataire</b></label>
-      <input type="email" placeholder="Entrer l'adresse email du Prestataire" name="prestataire" required>
+      <label><b>Client</b></label>
+      <input type="email" placeholder="Entrer l'adresse email du Client" name="client" required="">
 
       <label><b>Professionnel</b></label>
       <input type="email" placeholder="Entrer l'adresse email du Professionnel" name="professionnel" required>
+
+      <label><b>Prestataire (Optionnel)</b></label>
+      <input type="email" placeholder="Entrer l'adresse email du Prestataire" name="prestataire">
 
       <label><b>Description</b></label>
       <input type="text" placeholder="Décrivez le but du projet..." name="description" style="padding-bottom: 30px" required>

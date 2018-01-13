@@ -82,22 +82,22 @@ def connected(request):
                 new_project.key = get_random_string(length=32)
                 new_project.date_debut = timezone.now()
 
-                if CustomUser.objects.filter(email = cleaned_info['prestataire']).exists() and CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
-                    if cleaned_info['client'] == '':
-                        pre = CustomUser.objects.get(email = cleaned_info['prestataire'])
+                if CustomUser.objects.filter(email = cleaned_info['client']).exists() and CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
+                    if cleaned_info['prestataire'] == '':
+                        cli = CustomUser.objects.get(email = cleaned_info['client'])
                         pro = CustomUser.objects.get(email = cleaned_info['professionnel'])
-                        if pre.typeUser == 'Prestataire' and pro.typeUser == 'Professionnel':
+                        if cli.typeUser == 'Client' and pro.typeUser == 'Professionnel':
                             new_project.save()
-                            pre.add_project(new_project.key)
-                            pre.save()
+                            cli.add_project(new_project.key)
+                            cli.save()
                             pro.add_project(new_project.key)
                             pro.save()
                             return redirect(connected)
                         else:
-                            error = "Oups! L'adresse email entrée du Professionnel ou Prestataire ne correpond pas à la bonne personne!"
+                            error = "Oups! L'adresse email entrée du Professionnel ou Client ne correpond pas à la bonne personne!"
                             return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
                     else:
-                        if CustomUser.objects.filter(email = cleaned_info['client']).exists():
+                        if CustomUser.objects.filter(email = cleaned_info['prestataire']).exists():
                             pre = CustomUser.objects.get(email = cleaned_info['prestataire'])
                             pro = CustomUser.objects.get(email = cleaned_info['professionnel'])
                             cli = CustomUser.objects.get(email = cleaned_info['client'])
@@ -111,14 +111,14 @@ def connected(request):
                                 cli.save()
                                 return redirect(connected)
                             else:
-                                error = "Oups! L'adresse email entrée du Professionnel ou Prestataire ou Client ne correpond pas à la bonne personne!"
+                                error = "Oups! L'adresse email entrée du Professionnel ou Prestataire ou Client ne correpond pas à la bonne entité !"
                                 return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
                         else:
-                            error = "Le Client n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
+                            error = "Le Prestataire n'est pas enregistré à cette adresse mail, veuillez réessayer."
                             return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
                 else:
-                    if not CustomUser.objects.filter(email = cleaned_info['prestataire']).exists():
-                        error = "Le Prestataire n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
+                    if not CustomUser.objects.filter(email = cleaned_info['client']).exists():
+                        error = "Le Client n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
                     elif not CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
                         error = "Le Professionnel n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
                     return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})

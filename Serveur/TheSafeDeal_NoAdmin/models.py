@@ -95,8 +95,8 @@ class CustomUser(AbstractUser):
 class Projet(models.Model):
 	titre = models.CharField(max_length=200)
 	key = models.CharField(max_length=32, unique=True)
-	prestataire = models.TextField(max_length=150)
-	client = models.TextField(max_length=150, blank=True)
+	prestataire = models.TextField(max_length=150, blank=True)
+	client = models.TextField(max_length=150)
 	professionnel = models.TextField(max_length=150)
 	date_debut = models.DateTimeField(auto_now_add = True, auto_now=False)
 	date_fin = models.DateTimeField(auto_now = False, blank = False)
