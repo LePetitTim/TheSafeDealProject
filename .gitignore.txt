@@ -1,0 +1,3 @@
+TheSafeDeal/__pycache__
+TheSafeDeal_NoAdmin/__pycache__
+Serveur/db.sqlite3
