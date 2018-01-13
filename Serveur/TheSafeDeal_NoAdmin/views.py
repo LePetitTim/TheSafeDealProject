@@ -15,7 +15,7 @@ from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django import forms
 from django.contrib.auth import get_user_model
-from .models import CustomUser
+from .models import CustomUser, Projet
 
 
 # Create your views here.
@@ -66,6 +66,29 @@ def activate(request, uidb64, token):
         return redirect('home')
     else:
         return HttpResponse("Le lien d'activation est invalide!")
+def showProject(request, uidb32):
+	valide = ""
+	client=""
+	professionnel=""
+	prestataire=""
+	if request.user.is_authenticated():
+
+		if Projet.objects.filter(key=uidb32).exists(): 
+			project = Projet.objects.get(key=uidb32)
+		else:
+			valide = "Le Projet n'existe pas."
+			project = None
+		user = CustomUser.objects.all()
+		for i in user:
+			if project.prestataire == i.email:
+				prestataire = i.username
+			if project.client == i.email:
+				client = i.username
+			if project.professionnel == i.email:
+				professionnel = i.username
+		return render(request, 'project.html',{'form':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire})
+	else:
+		return render(request, 'project.html',{'connect':"Veuillez vous connecter"})
 
 def connected(request):
     user = request.user

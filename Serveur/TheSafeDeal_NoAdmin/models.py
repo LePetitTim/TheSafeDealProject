@@ -14,6 +14,7 @@ TYPE_USER = (
 class CustomUser(AbstractUser):
     typeUser = models.CharField(max_length=30, choices=TYPE_USER,null=False, blank=False)
     projet = models.CharField(max_length=32, blank=True)
+    email = models.EmailField(verbose_name='email address',max_length=255,unique=True,)
     
     def add_project(self, clé_projet):
     	if self.projet.find(clé_projet+";") == -1 :
