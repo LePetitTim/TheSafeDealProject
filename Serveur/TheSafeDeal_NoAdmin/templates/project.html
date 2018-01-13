@@ -2,17 +2,20 @@
 {% load staticfiles %}
 {% block content %}
 <table>
-	{{ valide }}
+	{% if valide %}
+	<br />
+	<center><strong>{{ valide }}</strong></center>
+	{% endif %}
 	{% if user.is_authenticated %}
 		{% if not user.typeUser == 'Professionnel' %}
-			{% if form != None %}
+			{% if projet != None %}
 				<tr>
 				 <th></th>
 				 <th>Infos projet</th>
 				</tr>
 				<tr>
 				 <th>Nom</th>
-				 <td>{{ form.titre }}</td>
+				 <td>{{ projet.titre }}</td>
 				</tr>
 				<tr>
 				 <th>Client</th>
@@ -28,15 +31,15 @@
 				</tr>
 				<tr>
 				 <th>Date début</th>
-				 <td>{{ form.date_debut }}</td>
+				 <td>{{ projet.date_debut }}</td>
 				</tr>
 				<tr>
 				 <th>Date fin</th>
-				 <td>{{ form.date_fin }}</td>
+				 <td>{{ projet.date_fin }}</td>
 				</tr>
 				<tr>
 					<th>Description</th>
-				 <td>{{ form.description }}</td>
+				 <td>{{ projet.description }}</td>
 				</tr>
 			{% endif %}	
 		{% endif %}

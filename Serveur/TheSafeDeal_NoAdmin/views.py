@@ -67,28 +67,32 @@ def activate(request, uidb64, token):
         return HttpResponse("Le lien d'activation est invalide!")
         
 def showProject(request, uidb32):
-	valide = ""
-	client=""
-	professionnel=""
-	prestataire=""
-	if request.user.is_authenticated():
+    valide = ""
+    client=""
+    professionnel=""
+    prestataire=""
+    if request.user.is_authenticated():
 
-		if Projet.objects.filter(key=uidb32).exists(): 
-			project = Projet.objects.get(key=uidb32)
-		else:
-			valide = "Le Projet n'existe pas."
-			project = None
-		user = CustomUser.objects.all()
-		for i in user:
-			if project.prestataire == i.email:
-				prestataire = i.username
-			if project.client == i.email:
-				client = i.username
-			if project.professionnel == i.email:
-				professionnel = i.username
-		return render(request, 'project.html',{'form':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire})
-	else:
-		return render(request, 'project.html',{'connect':"Veuillez vous connecter"})
+        if Projet.objects.filter(key=uidb32).exists(): 
+            project = Projet.objects.get(key=uidb32)
+        else:
+            valide = "Le Projet n'existe pas."
+            return render(request, 'project.html',{'valide':valide})
+        user = CustomUser.objects.all()
+        for i in user:
+            if project.prestataire == i.email:
+                prestataire = i.username
+            if project.client == i.email:
+                client = i.username
+            if project.professionnel == i.email:
+                professionnel = i.username
+        if request.user.username != prestataire and request.user.username != client and request.user.username != professionnel :
+            valide = "Vous n'avez pas accès à ce projet."
+            return render(request, 'project.html',{'valide':valide})
+        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire})
+    else:
+        valide = "Veuillez vous connecter pour voir cette page."
+        return render(request, 'project.html',{'valide':valide})
 
 def connected(request):
     user = request.user
