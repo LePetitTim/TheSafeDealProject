@@ -61,6 +61,38 @@ class CustomUser(AbstractUser):
     	return validated_projects,unvalidated_projects
 
 
+    # FUNCTION THAT SETS THE isValidate_[user_type] variable of the project to 1
+    def validate_project(self, project_key):
+    	user_type = self.typeUser
+    	projet = Projet.objects.get(key=project_key)
+    	if user_type == 'Prestataire':
+    		projet.isValidate_Prestataire = 1
+    		projet.save()
+    	elif user_type == 'Professionnel':
+    		projet.isValidate_Professionnel = 1
+    		projet.save()
+    	elif user_type == 'Client':
+    		projet.isValidate_Client = 1
+    		projet.save()
+
+    # FUNCTION THAT REMOVES THE PROJECT FROM THE USER PROJECTS LIST
+    def unvalidate_project(self, project_key):
+    	user_type = self.typeUser
+    	projet = Projet.objects.get(key=project_key)
+    	self.delete_projet(project_key)
+    	self.save()
+    	if user_type == 'Prestataire':
+    		projet.prestataire == ''
+    		projet.save()
+    	elif user_type == 'Professionnel':
+    		projet.professionnel = ''
+    		projet.save()
+    	elif user_type == 'Client':
+    		projet.client = ''
+    		projet.save()
+    	
+
+
 class Projet(models.Model):
 	titre = models.CharField(max_length=200)
 	key = models.CharField(max_length=32, unique=True)

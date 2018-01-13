@@ -17,7 +17,6 @@ from django import forms
 from django.contrib.auth import get_user_model
 from .models import CustomUser, Projet
 
-
 # Create your views here.
 
 def about(request):
@@ -66,6 +65,7 @@ def activate(request, uidb64, token):
         return redirect('home')
     else:
         return HttpResponse("Le lien d'activation est invalide!")
+        
 def showProject(request, uidb32):
 	valide = ""
 	client=""
@@ -116,6 +116,7 @@ def connected(request):
                             pre.save()
                             pro.add_project(new_project.key)
                             pro.save()
+                            return redirect(connected)
                         else:
                             error = "Oups! L'adresse email entrée du Professionnel ou Prestataire ne correpond pas à la bonne personne!"
                             return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
@@ -132,6 +133,7 @@ def connected(request):
                                 pro.save()
                                 cli.add_project(new_project.key)
                                 cli.save()
+                                return redirect(connected)
                             else:
                                 error = "Oups! L'adresse email entrée du Professionnel ou Prestataire ou Client ne correpond pas à la bonne personne!"
                                 return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
@@ -144,6 +146,16 @@ def connected(request):
                     elif not CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
                         error = "Le Professionnel n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
                     return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
+        
+        elif request.method == 'GET' and 'key' in request.GET and 'validate' in request.GET :
+            key = request.GET['key']
+            validate = request.GET['validate']
+            if validate == 'True' :
+                utilisateur.validate_project(key)
+            elif validate == 'False':
+                utilisateur.unvalidate_project(key)
+            return redirect(connected)
+            #request.META['QUERY_STRING'] = ''
         else:
             form = NewProjectForm()
         return render(request, 'connected.html',{'form':form, 'user':request.user, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
@@ -151,4 +163,5 @@ def connected(request):
         form = NewProjectForm()
 
     return render(request, 'connected.html',{'form':form, 'user':request.user})
+
 
