@@ -1,48 +1,54 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block content %}
-<table>
-	{% if valide %}
-	<br />
-	<center><strong>{{ valide }}</strong></center>
+
+{% if valide != '' %}
+<br />
+<center><strong>{{ valide }}</strong></center>
+{% endif %}
+
+{% if projet %}
+	{% if user.typeUser == 'Professionnel' and namePrestataire == '' %}
+		<div>
+			<button class="prestataire_button">+</button>
+			<input type="text" placeholder="Entrez l'email du Prestataire à ajouter au projet" style="width: 26%">
+		</div>
 	{% endif %}
-	{% if user.is_authenticated %}
-		{% if not user.typeUser == 'Professionnel' %}
-			{% if projet != None %}
-				<tr>
-				 <th></th>
-				 <th>Infos projet</th>
-				</tr>
-				<tr>
-				 <th>Nom</th>
-				 <td>{{ projet.titre }}</td>
-				</tr>
-				<tr>
-				 <th>Client</th>
-				 <td>{{ nameClient }}</td>
-				</tr>
-				<tr>
-				 <th>Professionnel</th>
-				 <td>{{ nameProfessionnel }}</td>
-				</tr>
-				<tr>
-				 <th>Prestataire</th>
-				 <td>{{ namePrestataire }}</td>
-				</tr>
-				<tr>
-				 <th>Date début</th>
-				 <td>{{ projet.date_debut }}</td>
-				</tr>
-				<tr>
-				 <th>Date fin</th>
-				 <td>{{ projet.date_fin }}</td>
-				</tr>
-				<tr>
-					<th>Description</th>
-				 <td>{{ projet.description }}</td>
-				</tr>
-			{% endif %}	
-		{% endif %}
-	{% endif %}
-</table>
+
+	<table>
+		<tr>
+		 <th></th>
+		 <th>Infos projet</th>
+		</tr>
+		<tr>
+		 <th>Nom</th>
+		 <td>{{ projet.titre }}</td>
+		</tr>
+		<tr>
+		 <th>Client</th>
+		 <td>{{ nameClient }}</td>
+		</tr>
+		<tr>
+		 <th>Professionnel</th>
+		 <td>{{ nameProfessionnel }}</td>
+		</tr>
+		<tr>
+		 <th>Prestataire</th>
+		 <td>{{ namePrestataire }}</td>
+		</tr>
+		<tr>
+		 <th>Date début</th>
+		 <td>{{ projet.date_debut }}</td>
+		</tr>
+		<tr>
+		 <th>Date fin</th>
+		 <td>{{ projet.date_fin }}</td>
+		</tr>
+		<tr>
+		 <th>Description</th>
+		 <td>{{ projet.description }}</td>
+		</tr>
+	</table>
+{% endif %}
+
 {% endblock %}

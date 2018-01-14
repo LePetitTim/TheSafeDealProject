@@ -6,15 +6,6 @@ input[type=text], input[type=password] {
     border: 1px solid #ccc;
     box-sizing: border-box;
 }
-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-}
 
 button:hover {
     opacity: 0.8;
@@ -103,6 +94,19 @@ th {
 }
 
 
+.prestataire_button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
 .cancelbtn {
     width: auto;
     padding: 10px 18px;
@@ -134,7 +138,6 @@ th {
     margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
     border: 1px solid #888;
     width: 50%; 
-    margin-bottom: 0px;
 }
 
 .new_project {

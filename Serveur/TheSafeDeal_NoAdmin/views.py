@@ -20,7 +20,7 @@ from .models import CustomUser, Projet
 # Create your views here.
 
 def about(request):
-    return render(request, 'about.html', {})
+    return render(request, 'about.html',{})
 
 def home(request):
     customUser = CustomUser.objects.all()
