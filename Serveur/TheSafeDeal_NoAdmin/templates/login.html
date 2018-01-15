@@ -8,6 +8,9 @@
 	{% for field in form %}
       <label><b>{{ field.label_tag }}</b></label>
 	  {{ field }}
+	  {% for error in field.errors %}
+		<p> {{ error|escape }} </p>
+	  {% endfor %}
     {% endfor %}  
     <button type="submit"/>Se Connecter</button>
     </div>

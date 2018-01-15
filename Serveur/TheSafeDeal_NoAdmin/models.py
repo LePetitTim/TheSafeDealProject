@@ -115,3 +115,8 @@ class Projet(models.Model):
 		return self.titre
 
 
+class Files(models.Model):
+    document = models.FileField(upload_to='')
+
+    def directory_path(instance, filename):
+    	return '{0}/{1}'.format(instance.user.id, filename)
