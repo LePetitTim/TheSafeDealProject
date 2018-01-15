@@ -19,10 +19,12 @@ class CustomUser(AbstractUser):
     def add_project(self, clé_projet):
     	if self.projet.find(clé_projet+";") == -1 :
     		self.projet = self.projet + clé_projet +";"
+    		self.save()
 
     def delete_projet(self, clé_projet):
     	if self.projet.find(clé_projet+";") != -1 :
     		self.projet = self.projet.replace(clé_projet+";","")
+    		self.save()
 
     # RETURN 1 LISTE CONTENANT DES STRINGS CORRESPONDANT AUX KEY DES PROJETS VISIBLES PAR LE USER
     def get_projects_list(self):
@@ -82,7 +84,7 @@ class CustomUser(AbstractUser):
     	self.delete_projet(project_key)
     	self.save()
     	if user_type == 'Prestataire':
-    		projet.prestataire == ''
+    		projet.prestataire = ''
     		projet.save()
     	elif user_type == 'Professionnel':
     		projet.professionnel = ''

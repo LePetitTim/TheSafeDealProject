@@ -10,8 +10,11 @@
 {% if projet %}
 	{% if user.typeUser == 'Professionnel' and namePrestataire == '' %}
 		<div>
-			<button class="prestataire_button">+</button>
-			<input type="text" placeholder="Entrez l'email du Prestataire à ajouter au projet" style="width: 26%">
+			<form method="post">
+				{% csrf_token %}
+				<button class="prestataire_button">+</button>
+				<input type="email" name="email" placeholder="Entrez l'email du Prestataire à ajouter au projet" style="width: 26%">
+			</form>
 		</div>
 	{% endif %}
 

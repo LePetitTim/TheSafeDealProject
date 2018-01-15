@@ -24,4 +24,5 @@ class NewProjectForm(forms.ModelForm):
 		model = Projet
 		fields = ('titre','client','prestataire','professionnel','description','prix','date_fin')
 
+    
 

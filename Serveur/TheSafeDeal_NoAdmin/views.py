@@ -78,6 +78,7 @@ def showProject(request, uidb32):
         else:
             valide = "Le Projet n'existe pas."
             return render(request, 'project.html',{'valide':valide})
+
         user = CustomUser.objects.all()
         for i in user:
             if project.prestataire == i.email:
@@ -89,7 +90,25 @@ def showProject(request, uidb32):
         if request.user.username != prestataire and request.user.username != client and request.user.username != professionnel :
             valide = "Vous n'avez pas accès à ce projet."
             return render(request, 'project.html',{'valide':valide})
-        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire})
+
+        if request.method == "POST" :
+            email_new_prestataire = request.POST['email']
+            if CustomUser.objects.filter(email=email_new_prestataire).exists() :
+                new_prestataire = CustomUser.objects.get(email=email_new_prestataire)
+                if new_prestataire.typeUser == 'Prestataire':
+                    project.prestataire = email_new_prestataire
+                    project.save()
+                    new_prestataire.add_project(uidb32)
+                    return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
+                    #return redirect(uidb32)
+                else:
+                    valide = "L'utilisateur entré n'est pas un Prestataire."
+                    return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
+            else:
+                valide = "Aucun utilisateur trouvé à cette adresse email."
+                return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
+
+        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
     else:
         valide = "Veuillez vous connecter pour voir cette page."
         return render(request, 'project.html',{'valide':valide})
@@ -117,9 +136,7 @@ def connected(request):
                         if cli.typeUser == 'Client' and pro.typeUser == 'Professionnel':
                             new_project.save()
                             cli.add_project(new_project.key)
-                            cli.save()
                             pro.add_project(new_project.key)
-                            pro.save()
                             return redirect(connected)
                         else:
                             error = "Oups! L'adresse email entrée du Professionnel ou Client ne correpond pas à la bonne personne!"
@@ -132,11 +149,8 @@ def connected(request):
                             if pre.typeUser == 'Prestataire' and pro.typeUser == 'Professionnel' and cli.typeUser == 'Client':
                                 new_project.save()
                                 pre.add_project(new_project.key)
-                                pre.save()
                                 pro.add_project(new_project.key)
-                                pro.save()
                                 cli.add_project(new_project.key)
-                                cli.save()
                                 return redirect(connected)
                             else:
                                 error = "Oups! L'adresse email entrée du Professionnel ou Prestataire ou Client ne correpond pas à la bonne entité !"
