@@ -112,6 +112,9 @@ class Projet(models.Model):
 	def __str__(self):
 		return self.titre
 
+
 class Files(models.Model):
-	file = models.FileField(upload_to='files')
-	key_f = models.CharField(max_length=32, unique=True)
+    document = models.FileField(upload_to='')
+
+    def directory_path(instance, filename):
+    	return '{0}/{1}'.format(instance.user.id, filename)

@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from .forms import SignupForm
 from .forms import NewProjectForm
+from .forms import FileForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -15,7 +16,7 @@ from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django import forms
 from django.contrib.auth import get_user_model
-from .models import CustomUser, Projet
+from .models import CustomUser, Projet, Files
 from django.core.files.storage import FileSystemStorage
 
 # Create your views here.
@@ -24,8 +25,9 @@ def about(request):
     return render(request, 'about.html',{})
 
 def home(request):
-    customUser = CustomUser.objects.all()
-    return render(request, 'home.html', {'CustomUser' : customUser})
+	file = Files.objects.all()
+	customUser = CustomUser.objects.all()
+	return render(request, 'home.html', {'CustomUser' : customUser, 'CustomFile' : file})
 
 def register(request):
     if request.method == 'POST':
@@ -170,16 +172,11 @@ def connected(request):
     return render(request, 'connected.html',{'form':form, 'user':request.user})
 
 def simple_upload(request):
-    if request.method == 'POST' and request.FILES['myfile']:
-        myfile = request.FILES['myfile']
-        fs = FileSystemStorage()
-        typeFile=''
-        typeFile=myfile.name.split(".")[-1].lower()
-        username = request.user
-        filename = fs.save(str(username)+'.'+typeFile, myfile)
-        uploaded_file_url = fs.url(filename)
-        return render(request, 'simple_upload.html', {
-            'uploaded_file_url': uploaded_file_url
-        })
-    return render(request, 'simple_upload.html')
-
+	if request.method == 'POST':
+		form = FileForm(request.POST, request.FILES)
+		if form.is_valid():
+			form.save()
+			return redirect('home')
+	else:
+		form = FileForm()
+	return render(request, 'simple_upload.html', {'form': form})

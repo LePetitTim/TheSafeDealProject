@@ -3,7 +3,12 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Projet
 from .models import CustomUser
+from .models import Files
 
+class FileForm(forms.ModelForm):
+    class Meta:
+        model = Files
+        fields = ('document', )
 
 
 class SignupForm(UserCreationForm):
