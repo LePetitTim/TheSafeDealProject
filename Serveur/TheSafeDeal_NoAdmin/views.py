@@ -16,6 +16,7 @@ from django.utils import timezone
 from django import forms
 from django.contrib.auth import get_user_model
 from .models import CustomUser, Projet
+from django.core.files.storage import FileSystemStorage
 
 # Create your views here.
 
@@ -168,4 +169,17 @@ def connected(request):
 
     return render(request, 'connected.html',{'form':form, 'user':request.user})
 
+def simple_upload(request):
+    if request.method == 'POST' and request.FILES['myfile']:
+        myfile = request.FILES['myfile']
+        fs = FileSystemStorage()
+        typeFile=''
+        typeFile=myfile.name.split(".")[-1].lower()
+        username = request.user
+        filename = fs.save(str(username)+'.'+typeFile, myfile)
+        uploaded_file_url = fs.url(filename)
+        return render(request, 'simple_upload.html', {
+            'uploaded_file_url': uploaded_file_url
+        })
+    return render(request, 'simple_upload.html')
 
