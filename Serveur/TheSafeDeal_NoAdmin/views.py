@@ -109,7 +109,7 @@ def showProject(request, uidb32):
                         valide = "L'utilisateur entré n'est pas un Prestataire."
                         return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
             elif 'document' in request.POST :
-                
+                new_document = request.POST['document']
             else:
                 valide = "Aucun utilisateur trouvé à cette adresse email."
                 return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
