@@ -16,16 +16,15 @@ PRESTATAIRE_CHOICES = (('Avance', 'Avance'),
 CLIENT_CHOICE = (('Document pour Contrat', 'Document pour Contrat'))
 
 class FileForm(forms.ModelForm):
-    class Meta:
-        model = Files
-        fields = ('typeName','document', )
-
-    def __init__(self, *args, **kwargs):
-		is_staff = kwargs.pop('is_staff')
-		super(AddMovementForm, self).__init__(*args, **kwargs)
-		if is_staff:
+	class Meta:
+		model = Files
+		fields = ('typeName','document', )
+	def __init__(self, *args, **kwargs):
+		typeUser = user.typeuser
+		super(FileForm, self).__init__(*args, **kwargs)
+		if typeUser == "prestataire":
 			self.fields['typeName'].choices = PRESTATAIRE_CHOICES
-	    else:
+		else:
 			self.fields['typeName'].choices = CLIENT_CHOICE
 
 

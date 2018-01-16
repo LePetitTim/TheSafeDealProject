@@ -119,7 +119,7 @@ def directory_path(instance,filename):
 	return '{0}/{1}'.format(instance.projet_key,instance.name +'.'+typeFileName)
 
 class Files(models.Model):
-	typeName = models.CharField(max_length=30,null=False, blank=False)
+	typeName = models.CharField(max_length=30,null=True, blank=False)
 	projet_key= models.CharField(max_length=32, blank = True)
 	document = models.FileField(upload_to=directory_path)
 	
