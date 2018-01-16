@@ -7,6 +7,13 @@
 <center><strong>{{ valide }}</strong></center>
 {% endif %}
 
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="document">
+    <button class="prestataire_button">Upload</button>
+  </form>
+
+
 {% if projet %}
 	{% if user.typeUser == 'Professionnel' and namePrestataire == '' %}
 		<div>
@@ -17,7 +24,7 @@
 			</form>
 		</div>
 	{% endif %}
-
+	
 	<table>
 		<tr>
 		 <th></th>
@@ -53,5 +60,7 @@
 		</tr>
 	</table>
 {% endif %}
+
+
 
 {% endblock %}

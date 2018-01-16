@@ -114,10 +114,12 @@ class Projet(models.Model):
 	def __str__(self):
 		return self.titre
 
+def directory_path(instance,filename):
+	typeFileName = filename.split(".")[-1]
+	return '{0}/{1}'.format(instance.projet_key,instance.name +'.'+typeFileName)
 
 class Files(models.Model):
-	projet_key= models.CharField(max_length=32)
-    document = models.FileField(upload_to=directory_path)
-
-    def directory_path(instance,filename):
-    	return '{0}/{1}'.format(projet_key, filename)
+	name = models.CharField(max_length=32, blank = False)
+	projet_key= models.CharField(max_length=32, blank = True)
+	document = models.FileField(upload_to=directory_path)
+	

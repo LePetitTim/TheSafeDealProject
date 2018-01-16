@@ -94,7 +94,7 @@ def showProject(request, uidb32):
             valide = "Vous n'avez pas accès à ce projet."
             return render(request, 'project.html',{'valide':valide})
 
-        if request.method == "POST" :
+        if request.method == "POST":
             if 'email' in request.POST :
                 email_new_prestataire = request.POST['email']
                 if CustomUser.objects.filter(email=email_new_prestataire).exists() :
@@ -108,8 +108,12 @@ def showProject(request, uidb32):
                     else:
                         valide = "L'utilisateur entré n'est pas un Prestataire."
                         return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
-            elif 'document' in request.POST :
-                new_document = request.POST['document']
+            elif request.FILES :
+                form = FileForm(request.POST,request.FILES)
+                if form.is_valid():
+                    new_document = form.save(commit=False)
+                    new_document.projet_key = uidb32
+                    new_document.save()
             else:
                 valide = "Aucun utilisateur trouvé à cette adresse email."
                 return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
