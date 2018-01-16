@@ -9,6 +9,7 @@
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+	<input type="name" name="name" placeholder="Ajouter un nom a votre fichier">
     <input type="file" name="document">
     <button class="prestataire_button">Upload</button>
   </form>
