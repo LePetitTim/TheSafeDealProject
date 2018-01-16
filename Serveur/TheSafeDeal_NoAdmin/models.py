@@ -122,7 +122,7 @@ PRESTATAIRE_CHOICES = (('Avance', 'Avance'),
 	('Devis', 'Devis'),
 	('Facture', 'Facture'))
 
-USER_CHOICES = (('Document pour Contrat', 'Document pour Contrat'))
+CLIENT_CHOICE = (('Document pour Contrat', 'Document pour Contrat'))
 
 def directory_path(instance,filename):
 	typeFileName = filename.split(".")[-1]
