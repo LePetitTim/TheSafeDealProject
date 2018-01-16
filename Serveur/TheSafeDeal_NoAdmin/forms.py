@@ -19,13 +19,6 @@ class FileForm(forms.ModelForm):
 	class Meta:
 		model = Files
 		fields = ('typeName','document', )
-	def __init__(self, *args, **kwargs):
-		typeUser = user.typeuser
-		super(FileForm, self).__init__(*args, **kwargs)
-		if typeUser == "prestataire":
-			self.fields['typeName'].choices = PRESTATAIRE_CHOICES
-		else:
-			self.fields['typeName'].choices = CLIENT_CHOICE
 
 
 class SignupForm(UserCreationForm):

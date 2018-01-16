@@ -7,12 +7,6 @@
 <center><strong>{{ valide }}</strong></center>
 {% endif %}
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="document">
-    <button class="prestataire_button">Upload</button>
-  </form>
-
 
 {% if projet %}
 	{% if user.typeUser == 'Professionnel' and namePrestataire == '' %}
@@ -24,6 +18,31 @@
 			</form>
 		</div>
 	{% endif %}
+
+	<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+	    <input type="file" name="document" required>
+	    {% if user.typeUser == 'Client' %}
+	    <select id="monselect" name="typeName" required>
+			<option value="documents_contrat">Documents nécessaires au contrat</option> 
+			<option value="photos" selected>Photos</option>
+		</select>
+	    {% elif user.typeUser == 'Prestataire' %}
+	    <select id="monselect" name="typeName" required>
+			<option value="devis">Devis</option> 
+			<option value="facture" selected>Facture</option>
+			<option value="photos">Photos</option> 
+			<option value="avancee" selected>Avancée du projet</option>
+		</select>
+	    {% elif user.typeUser == 'Professionnel '%}
+	    <select id="monselect" name="typeName" required>
+			<option value="demande_travaux">Demande de travaux</option> 
+			<option value="photos" selected>Photos</option>
+			<option value="avancee" selected>Avancée du projet</option>
+		</select>
+	    {% endif %}
+	    <button class="prestataire_button">Upload</button>
+	</form>
 	
 	<table>
 		<tr>

@@ -113,6 +113,7 @@ def showProject(request, uidb32):
                 if form.is_valid():
                     new_document = form.save(commit=False)
                     new_document.projet_key = uidb32
+                    new_document.typeName = request.POST['typeName']
                     new_document.save()
             else:
                 valide = "Aucun utilisateur trouvé à cette adresse email."

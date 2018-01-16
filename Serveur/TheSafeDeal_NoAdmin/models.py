@@ -116,7 +116,7 @@ class Projet(models.Model):
 
 def directory_path(instance,filename):
 	typeFileName = filename.split(".")[-1]
-	return '{0}/{1}'.format(instance.projet_key,instance.name +'.'+typeFileName)
+	return '{0}/{1}'.format(instance.projet_key,instance.typeName +'.'+typeFileName)
 
 class Files(models.Model):
 	typeName = models.CharField(max_length=30,null=True, blank=False)
