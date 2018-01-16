@@ -95,18 +95,21 @@ def showProject(request, uidb32):
             return render(request, 'project.html',{'valide':valide})
 
         if request.method == "POST" :
-            email_new_prestataire = request.POST['email']
-            if CustomUser.objects.filter(email=email_new_prestataire).exists() :
-                new_prestataire = CustomUser.objects.get(email=email_new_prestataire)
-                if new_prestataire.typeUser == 'Prestataire':
-                    project.prestataire = email_new_prestataire
-                    project.save()
-                    new_prestataire.add_project(uidb32)
-                    return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
-                    #return redirect(uidb32)
-                else:
-                    valide = "L'utilisateur entré n'est pas un Prestataire."
-                    return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
+            if 'email' in request.POST :
+                email_new_prestataire = request.POST['email']
+                if CustomUser.objects.filter(email=email_new_prestataire).exists() :
+                    new_prestataire = CustomUser.objects.get(email=email_new_prestataire)
+                    if new_prestataire.typeUser == 'Prestataire':
+                        project.prestataire = email_new_prestataire
+                        project.save()
+                        new_prestataire.add_project(uidb32)
+                        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
+                        #return redirect(uidb32)
+                    else:
+                        valide = "L'utilisateur entré n'est pas un Prestataire."
+                        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
+            elif 'document' in request.POST :
+                
             else:
                 valide = "Aucun utilisateur trouvé à cette adresse email."
                 return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
