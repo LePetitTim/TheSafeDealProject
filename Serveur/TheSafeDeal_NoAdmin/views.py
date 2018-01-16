@@ -115,13 +115,14 @@ def showProject(request, uidb32):
                     new_document = form.save(commit=False)
                     new_document.projet_key = uidb32
                     new_document.typeName = request.POST['typeName']
-                    new_document.uploaded_by = CustomUser.objects.get(username=request.user).username + "("+ CustomUser.objects.get(username=request.user).typeUser +")"
+                    new_document.uploaded_by = CustomUser.objects.get(username=request.user).username + " ("+ CustomUser.objects.get(username=request.user).typeUser +")"
                     new_document.original_name = request.FILES['document']
+                    new_document.key = get_random_string(length=32)
                     new_document.save()
             else:
                 valide = "Aucun utilisateur trouvé à cette adresse email."
                 return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
-                
+
         return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
     else:
         valide = "Veuillez vous connecter pour voir cette page."

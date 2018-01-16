@@ -105,8 +105,8 @@ class CustomUser(AbstractUser):
     	documents = Files.objects.all()
     	fichier = []
     	for file in files :
-    		if Files.objects.filter(original_name=file.replace("_"," ")).exists():
-    			fichier.append(Files.objects.get(original_name=file.replace("_"," ")))
+    		if Files.objects.filter(key=file.split(".")[0]).exists():
+    			fichier.append(Files.objects.get(key=file.split(".")[0]))
 
     	result = []
     	if self.typeUser == 'Client' :
@@ -148,8 +148,7 @@ class Projet(models.Model):
 
 def directory_path(instance,filename):
 	typeFileName = filename.split(".")[-1]
-	#return '{0}/{1}'.format(instance.projet_key,instance.typeName +'.'+typeFileName)
-	return '{0}/{1}'.format(instance.projet_key,filename)
+	return '{0}/{1}'.format(instance.projet_key,instance.key +'.'+typeFileName)
 
 class Files(models.Model):
 	typeName = models.CharField(max_length=30,null=True, blank=False)
@@ -158,6 +157,7 @@ class Files(models.Model):
 	upload_date = models.DateTimeField(auto_now_add = True, auto_now=False)
 	uploaded_by = models.TextField(max_length=150)
 	original_name = models.TextField(max_length=150)
+	key = models.CharField(max_length=32, unique=True)
 
 	def remove_extension(self):
 		return (self.original_name.split(".")[0])

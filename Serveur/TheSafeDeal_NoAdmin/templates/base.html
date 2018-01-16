@@ -21,7 +21,9 @@
   <li style="float:right;padding-right: 5px"><a class="active" href="{% url 'register' %}">Créer un Compte</a></li>
   {% endif %}
   {% if user.is_authenticated %}
+
   <li style="float:right;padding-right: 5px"><a class="active" href="{% url 'logout' %}">Se Deconnecter</a></li>
+  <li style="float:right;padding-right: 30px;margin-top: 15px;color:white">Bonjour {{ user.username }} !</li>
   {% endif %}
 </ul>
 {{ CustomFile.1.path }}
