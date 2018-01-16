@@ -5,10 +5,28 @@ from .models import Projet
 from .models import CustomUser
 from .models import Files
 
+PRO_CHOICES = (('Contrat', 'Contrat'),
+	('Devis', 'Devis'),
+	('Facture', 'Facture'))
+
+PRESTATAIRE_CHOICES = (('Avance', 'Avance'),
+	('Devis', 'Devis'),
+	('Facture', 'Facture'))
+
+CLIENT_CHOICE = (('Document pour Contrat', 'Document pour Contrat'))
+
 class FileForm(forms.ModelForm):
     class Meta:
         model = Files
-        fields = ('name','document', )
+        fields = ('typeName','document', )
+
+    def __init__(self, *args, **kwargs):
+		is_staff = kwargs.pop('is_staff')
+		super(AddMovementForm, self).__init__(*args, **kwargs)
+		if is_staff:
+			self.fields['typeName'].choices = PRESTATAIRE_CHOICES
+	    else:
+			self.fields['typeName'].choices = CLIENT_CHOICE
 
 
 class SignupForm(UserCreationForm):
@@ -28,6 +46,8 @@ class NewProjectForm(forms.ModelForm):
 	class Meta:
 		model = Projet
 		fields = ('titre','client','prestataire','professionnel','description','prix','date_fin')
+
+
 
     
 

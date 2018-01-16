@@ -114,29 +114,12 @@ class Projet(models.Model):
 	def __str__(self):
 		return self.titre
 
-PRO_CHOICES = (('Contrat', 'Contrat'),
-	('Devis', 'Devis'),
-	('Facture', 'Facture'))
-
-PRESTATAIRE_CHOICES = (('Avance', 'Avance'),
-	('Devis', 'Devis'),
-	('Facture', 'Facture'))
-
-CLIENT_CHOICE = (('Document pour Contrat', 'Document pour Contrat'))
-
 def directory_path(instance,filename):
 	typeFileName = filename.split(".")[-1]
 	return '{0}/{1}'.format(instance.projet_key,instance.name +'.'+typeFileName)
 
 class Files(models.Model):
-	typeName = models.CharField(max_length=30, choices=TYPE_USER,null=False, blank=False)
+	typeName = models.CharField(max_length=30,null=False, blank=False)
 	projet_key= models.CharField(max_length=32, blank = True)
 	document = models.FileField(upload_to=directory_path)
 	
-	def __init__(self, *args, **kwargs):
-		is_staff = kwargs.pop('is_staff')
-		super(AddMovementForm, self).__init__(*args, **kwargs)
-		if is_staff:
-			self.fields['status'].choices = STAFF_STATUS_CHOICES
-	    else:
-			self.fields['status'].choices = STATUS_CHOICES
