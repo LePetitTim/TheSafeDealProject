@@ -7,7 +7,6 @@
 <center><strong>{{ valide }}</strong></center>
 {% endif %}
 
-
 {% if projet %}
 	{% if user.typeUser == 'Professionnel' and namePrestataire == '' %}
 		<div>
@@ -32,13 +31,14 @@
 			<option value="devis">Devis</option> 
 			<option value="facture" selected>Facture</option>
 			<option value="photos">Photos</option> 
-			<option value="avancee" selected>Avancée du projet</option>
+			<option value="avancee_pre" selected>Avancée du projet</option>
 		</select>
 	    {% elif user.typeUser == 'Professionnel '%}
 	    <select id="monselect" name="typeName" required>
 			<option value="demande_travaux">Demande de travaux</option> 
+			<option value="contrat" selected>Contrat du projet</option>
 			<option value="photos" selected>Photos</option>
-			<option value="avancee" selected>Avancée du projet</option>
+			<option value="avancee_pro" selected>Avancée du projet</option>
 		</select>
 	    {% endif %}
 	    <button class="prestataire_button">Upload</button>
@@ -78,7 +78,29 @@
 		 <td>{{ projet.description }}</td>
 		</tr>
 	</table>
+
+	
+		<table>
+			<tr>
+		     <th>Nom du document</th>
+		     <th>Type de document</th>
+		     <th>Uploadé par</th>
+		     <th>Date d'upload</th>
+		    </tr>
+			<tr>
+			{% for file in files %}
+		     	<td>{{ file.original_name }}</td>
+		     	<td>{{ file.typeName }}</td>
+		     	<td>{{ file.uploaded_by }}</td>
+		     	<td>{{ file.upload_date }}</td>
+		    </tr>
+			{% endfor %}
+		     
+		</table>
+	
+
 {% endif %}
+
 
 
 

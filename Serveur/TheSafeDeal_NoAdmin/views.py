@@ -75,7 +75,7 @@ def showProject(request, uidb32):
     professionnel=""
     prestataire=""
     if request.user.is_authenticated():
-
+        utilisateur = CustomUser.objects.get(username=request.user)
         if Projet.objects.filter(key=uidb32).exists(): 
             project = Projet.objects.get(key=uidb32)
         else:
@@ -94,6 +94,7 @@ def showProject(request, uidb32):
             valide = "Vous n'avez pas accès à ce projet."
             return render(request, 'project.html',{'valide':valide})
 
+        documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
         if request.method == "POST":
             if 'email' in request.POST :
                 email_new_prestataire = request.POST['email']
@@ -103,23 +104,25 @@ def showProject(request, uidb32):
                         project.prestataire = email_new_prestataire
                         project.save()
                         new_prestataire.add_project(uidb32)
-                        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
+                        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' :documents_list_of_user_of_project})
                         #return redirect(uidb32)
                     else:
                         valide = "L'utilisateur entré n'est pas un Prestataire."
-                        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
+                        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
             elif request.FILES :
                 form = FileForm(request.POST,request.FILES)
                 if form.is_valid():
                     new_document = form.save(commit=False)
                     new_document.projet_key = uidb32
                     new_document.typeName = request.POST['typeName']
+                    new_document.uploaded_by = CustomUser.objects.get(username=request.user).username + "("+ CustomUser.objects.get(username=request.user).typeUser +")"
+                    new_document.original_name = request.FILES['document']
                     new_document.save()
             else:
                 valide = "Aucun utilisateur trouvé à cette adresse email."
-                return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
-
-        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key})
+                return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
+                
+        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
     else:
         valide = "Veuillez vous connecter pour voir cette page."
         return render(request, 'project.html',{'valide':valide})
@@ -184,7 +187,6 @@ def connected(request):
             elif validate == 'False':
                 utilisateur.unvalidate_project(key)
             return redirect(connected)
-            #request.META['QUERY_STRING'] = ''
         else:
             form = NewProjectForm()
         return render(request, 'connected.html',{'form':form, 'user':request.user, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})

@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
+from django.conf import settings
+import os
+
 
 
 # Create your models here.
@@ -92,7 +95,36 @@ class CustomUser(AbstractUser):
     	elif user_type == 'Client':
     		projet.client = ''
     		projet.save()
-    	
+
+    # FONCTION QUI RETURN UNE LISTE CONTENANT DES OBJETS FILES DU PROJET ENTRE ET QUE LE USER PEUT VOIR
+    def get_user_and_project_files(self, project_key):
+    	media_path = settings.MEDIA_ROOT
+    	#filelisting = FileListing(media_path, sorting_order='upload_date')
+    	#files = filelisting.walk(project_key)
+    	files = os.listdir(media_path+"/"+project_key)
+    	documents = Files.objects.all()
+    	fichier = []
+    	for file in files :
+    		if Files.objects.filter(original_name=file.replace("_"," ")).exists():
+    			fichier.append(Files.objects.get(original_name=file.replace("_"," ")))
+
+    	result = []
+    	if self.typeUser == 'Client' :
+    		for file in fichier :
+    			if file.typeName == 'contrat' or file.typeName == 'documents_contrat' or file.typeName == 'photos' or file.typeName == 'avancee_pro' :
+		            file.original_name = file.remove_extension()
+		            result.append(file)
+    	elif self.typeUser == 'Prestataire' :
+    		for file in fichier :
+	        	if file.typeName == 'demande_travaux' or file.typeName == 'photos' or file.typeName == 'avancee_pre' or file.typeName == 'devis' or file.typeName == 'facture':
+		            file.original_name = file.remove_extension()
+		            result.append(file)
+    	elif self.typeUser == 'Professionnel' :
+    		for file in fichier :
+	        	if file.typeName == 'contrat' or file.typeName == 'documents_contrat' or file.typeName == 'demande_travaux' or file.typeName == 'photos' or file.typeName == 'avancee_pre' or file.typeName == 'devis' or file.typeName == 'facture':
+		            file.original_name = file.remove_extension()
+		            result.append(file)
+    	return result
 
 
 class Projet(models.Model):
@@ -116,10 +148,17 @@ class Projet(models.Model):
 
 def directory_path(instance,filename):
 	typeFileName = filename.split(".")[-1]
-	return '{0}/{1}'.format(instance.projet_key,instance.typeName +'.'+typeFileName)
+	#return '{0}/{1}'.format(instance.projet_key,instance.typeName +'.'+typeFileName)
+	return '{0}/{1}'.format(instance.projet_key,filename)
 
 class Files(models.Model):
 	typeName = models.CharField(max_length=30,null=True, blank=False)
 	projet_key= models.CharField(max_length=32, blank = True)
 	document = models.FileField(upload_to=directory_path)
+	upload_date = models.DateTimeField(auto_now_add = True, auto_now=False)
+	uploaded_by = models.TextField(max_length=150)
+	original_name = models.TextField(max_length=150)
+
+	def remove_extension(self):
+		return (self.original_name.split(".")[0])
 	
