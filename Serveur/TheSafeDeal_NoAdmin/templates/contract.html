@@ -4,7 +4,9 @@
 
 {% block content %}
 <h1>New contract</h1>
-    <form method="POST" class="post-form">{% csrf_token %}
+
+    <form method="POST" class="post-form">
+	{% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="save btn btn-default">Save</button>
     </form>

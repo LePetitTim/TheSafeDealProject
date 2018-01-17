@@ -257,3 +257,15 @@ def contract(request, uidb32):
         valide = "Veuillez vous connecter pour voir cette page."
         return render(request, 'project.html',{'valide':valide})
 
+def create_contract(request, uidb32):
+	if request.method == "POST":
+		form = ContractForm(request.POST)
+		if form.is_valid():
+			new_contract = form.save(commit=False)
+			new_contract.key = uidb32
+			new_contract.created_date = timezone.now()
+			new_contract.save()
+			return redirect('create_contract', uidb32=uidb32)
+		else:
+			form = ContractForm()
+		return render(request, 'blog/post_edit.html', {'form': form})
