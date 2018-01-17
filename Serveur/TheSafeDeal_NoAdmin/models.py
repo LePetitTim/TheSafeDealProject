@@ -1,13 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
-<<<<<<< HEAD
 from django.utils import timezone
-=======
 from django.conf import settings
 import os
 
->>>>>>> 28840e0aba3d29e3bc8f2ea21953f2503bb9df6b
+
 
 
 # Create your models here.
@@ -158,8 +156,14 @@ class Files(models.Model):
 	typeName = models.CharField(max_length=30,null=True, blank=False)
 	projet_key= models.CharField(max_length=32, blank = True)
 	document = models.FileField(upload_to=directory_path)
-<<<<<<< HEAD
-	
+	upload_date = models.DateTimeField(auto_now_add = True, auto_now=False)
+	uploaded_by = models.TextField(max_length=150)
+	original_name = models.TextField(max_length=150)
+	key = models.CharField(max_length=32, unique=True)
+
+	def remove_extension(self):
+		return (self.original_name.split(".")[0])
+		
 class Contract(models.Model):
     projet_key = models.CharField(max_length=32, blank = True, unique= True)
     title = models.CharField(max_length=200)
@@ -168,13 +172,6 @@ class Contract(models.Model):
 
     def __str__(self):
         return self.title
-=======
-	upload_date = models.DateTimeField(auto_now_add = True, auto_now=False)
-	uploaded_by = models.TextField(max_length=150)
-	original_name = models.TextField(max_length=150)
-	key = models.CharField(max_length=32, unique=True)
-
-	def remove_extension(self):
-		return (self.original_name.split(".")[0])
 	
->>>>>>> 28840e0aba3d29e3bc8f2ea21953f2503bb9df6b
+
+	
