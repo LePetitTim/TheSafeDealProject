@@ -15,7 +15,7 @@ urlpatterns = [
     url(r'^project/(?P<uidb32>[0-9A-Za-z_\-]+)/contract$', views.contract, name='contract'),
     url(r'^upload$', views.simple_upload, name='simple_upload'),
     url(r'^download/(?P<project_key>[0-9A-Za-z_\-]+)/(?P<document_key>[0-9A-Za-z_\-]+)$', views.download, name='download'),
-
+	url(r'^project/(?P<uidb32>[0-9A-Za-z_\-]+)$', views.showProject, name='project'),
 ]
 
 if settings.DEBUG:
