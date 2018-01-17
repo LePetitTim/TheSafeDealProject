@@ -197,16 +197,6 @@ def connected(request):
 
     return render(request, 'connected.html',{'form':form, 'user':request.user})
 
-def simple_upload(request):
-	if request.method == 'POST':
-		form = FileForm(request.POST, request.FILES)
-		if form.is_valid():
-			form.save()
-			return redirect('home')
-	else:
-		form = FileForm()
-	return render(request, 'simple_upload.html', {'form': form})
-
 def download(request, project_key, document_key):
     if request.user.is_authenticated():
         utilisateur = CustomUser.objects.get(username=request.user)
