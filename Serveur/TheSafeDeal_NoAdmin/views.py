@@ -76,10 +76,7 @@ def showProject(request, uidb32):
     professionnel=""
     prestataire=""
     if request.user.is_authenticated():
-<<<<<<< HEAD
-=======
         utilisateur = CustomUser.objects.get(username=request.user)
->>>>>>> 28840e0aba3d29e3bc8f2ea21953f2503bb9df6b
         if Projet.objects.filter(key=uidb32).exists(): 
             project = Projet.objects.get(key=uidb32)
         else:
@@ -200,7 +197,7 @@ def connected(request):
 
     return render(request, 'connected.html',{'form':form, 'user':request.user})
 
-<<<<<<< HEAD
+
 def contract(request, uidb32):
     if request.user.is_authenticated():
         if Projet.objects.filter(key=uidb32).exists():
@@ -241,18 +238,3 @@ def contract(request, uidb32):
     else:
         valide = "Veuillez vous connecter pour voir cette page."
         return render(request, 'project.html',{'valide':valide})
-
-        
-
-    
-=======
-def simple_upload(request):
-	if request.method == 'POST':
-		form = FileForm(request.POST, request.FILES)
-		if form.is_valid():
-			form.save()
-			return redirect('home')
-	else:
-		form = FileForm()
-	return render(request, 'simple_upload.html', {'form': form})
->>>>>>> 28840e0aba3d29e3bc8f2ea21953f2503bb9df6b
