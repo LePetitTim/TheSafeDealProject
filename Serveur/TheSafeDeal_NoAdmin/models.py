@@ -143,6 +143,7 @@ class Projet(models.Model):
 	isValidate_Professionnel = models.BooleanField(default=False)
 	isValidate_Client = models.BooleanField(default=False)
 
+
 	REQUIERED_FIELDS = []
 
 	def __str__(self):
