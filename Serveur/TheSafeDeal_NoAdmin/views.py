@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from .forms import SignupForm
 from .forms import NewProjectForm
@@ -207,8 +207,10 @@ def download(request, project_key, document_key):
         valide = 'Veuillez vous connecter pour accéder à cette fonctionnalité.'
 
 def contract(request, uidb32):
+	post = get_object_or_404(Contract, projet_key=uidb32)
+	save = "False"
 	if request.user.is_authenticated():
-		if request.method == "POST":
+		if request.method == "POST" and 'new' in request.POST:
 			form = ContractForm(request.POST)
 			if form.is_valid():
 				new_contract = form.save(commit=False)
@@ -216,6 +218,17 @@ def contract(request, uidb32):
 				new_contract.created_date = timezone.now()
 				new_contract.save()
 				return render(request, 'contract.html', {'contract':new_contract})
+		elif request.method == "POST" and "edit" in request.POST:
+			form = ContractForm(request.POST, instance=post)
+			if form.is_valid():
+				new_contract = form.save(commit=False)
+				new_contract.projet_key = uidb32
+				new_contract.created_date = timezone.now()
+				new_contract.save()
+				save = "True"
+				return render(request, 'contract.html', {'contract':new_contract, 'save':save})	 
+			form = ContractForm(instance=post)
+			return render(request, 'contract.html', {'contract':form,'save':save})
 		else:
 			form = ContractForm()
 			if Projet.objects.filter(key=uidb32).exists():
