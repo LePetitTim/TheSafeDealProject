@@ -3,11 +3,22 @@
 {% load static %}
 
 {% block content %}
-<h1>New contract</h1>
 
-    <form method="POST" class="post-form">
+
+	{{ addContract }} <!--> Lors d'erreur <!-->
+	
+	
+<form method="POST" class="post-form">
 	{% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Save</button>
+
+	{{ contract.title }}
+	{{ contract.text }}
+	{{ contract.created_date}}
+
+	{% if form != Null %}
+		<h1>New contract</h1>	
+		{{ form }}
+		<button type="submit" class="save btn btn-default">Save</button>
+	{% endif %}
     </form>
 {% endblock %}

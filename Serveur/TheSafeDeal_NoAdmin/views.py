@@ -207,55 +207,44 @@ def download(request, project_key, document_key):
         valide = 'Veuillez vous connecter pour accéder à cette fonctionnalité.'
 
 def contract(request, uidb32):
-    if request.user.is_authenticated():
-        if Projet.objects.filter(key=uidb32).exists():
-            if Contract.objects.filter(projet_key=uidb32).exists():
-                contract =  Contract.objects.get(projet_key=uidb32)
-                stateContract = True
-            else:
-                contract=""
-                addContract = "Il n'y a pas encore de contrat pour ce projet."
-                stateContract = False
-                return render(request, 'contract.html',{'contract':contract ,'addContract':addContract,'stateContract':stateContract})
-        else:
-            valide = "Le Projet n'existe pas."
-            return render(request, 'project.html',{'valide':valide})
-
-        user = CustomUser.objects.all()
-        for i in user:
-            if project.prestataire == i.email:
-                prestataire = i.username
-            if project.client == i.email:
-                client = i.username
-            if project.professionnel == i.email:
-                professionnel = i.username
-
-        if request.user.username != prestataire and request.user.username != client and request.user.username != professionnel :
-            valide = "Vous n'avez pas accès à ce projet."
-            return render(request, 'project.html',{'valide':valide})
-        if request.user.typeUser ==prestataire :
-            valide = "Vous n'avez pas accès à ce projet."
-            return render(request, 'project.html',{'valide':valide})
-        if request.method == "POST":
-            form = ContractForm()
-            new_contract = form.save(commit=False)
-            new_contract.key = uidb32
-            new_contract.save()
-            return render(request, 'contract.html', {'contract':contract , 'addContract':addContract, 'stateContract':stateContract})
-        return render(request, 'contract.html', {'contract':contract , 'addContract':addContract, 'stateContract':stateContract})
-    else:
-        valide = "Veuillez vous connecter pour voir cette page."
-        return render(request, 'project.html',{'valide':valide})
-
-def create_contract(request, uidb32):
-	if request.method == "POST":
-		form = ContractForm(request.POST)
-		if form.is_valid():
-			new_contract = form.save(commit=False)
-			new_contract.key = uidb32
-			new_contract.created_date = timezone.now()
-			new_contract.save()
-			return redirect('create_contract', uidb32=uidb32)
+	if request.user.is_authenticated():
+		if request.method == "POST":
+			form = ContractForm(request.POST)
+			if form.is_valid():
+				new_contract = form.save(commit=False)
+				new_contract.projet_key = uidb32
+				new_contract.created_date = timezone.now()
+				new_contract.save()
+				return render(request, 'contract.html', {'contract':new_contract})
 		else:
 			form = ContractForm()
-		return render(request, 'blog/post_edit.html', {'form': form})
+			if Projet.objects.filter(key=uidb32).exists():
+				if Contract.objects.filter(projet_key=uidb32).exists():
+					contract =  Contract.objects.get(projet_key=uidb32)
+					return render(request, 'contract.html', {'contract':contract})
+				else:
+					contract=""
+					error = "Il n'y a pas encore de contrat pour ce projet."
+					return render(request, 'contract.html',{'contract':contract ,'error':error, 'form':form})
+			else:
+				valide = "Le Projet n'existe pas."
+				return render(request, 'project.html',{'valide':valide})
+
+			user = CustomUser.objects.all()
+			for i in user:
+				if project.prestataire == i.email:
+					prestataire = i.username
+				if project.client == i.email:
+					client = i.username
+				if project.professionnel == i.email:
+					professionnel = i.username
+			if request.user.username != prestataire and request.user.username != client and request.user.username != professionnel :
+				valide = "Vous n'avez pas accès à ce projet."
+				return render(request, 'project.html',{'valide':valide})
+			if request.user.typeUser ==prestataire :
+				valide = "Vous n'avez pas accès à ce projet."
+				return render(request, 'project.html',{'valide':valide})
+			
+	else:
+		valide = "Veuillez vous connecter pour voir cette page."
+		return render(request, 'project.html',{'valide':valide})
