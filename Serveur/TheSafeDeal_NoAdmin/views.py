@@ -5,6 +5,7 @@ from django.contrib.auth import login, authenticate
 from .forms import SignupForm
 from .forms import NewProjectForm
 from .forms import FileForm
+from .forms import ContractForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -16,7 +17,7 @@ from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django import forms
 from django.contrib.auth import get_user_model
-from .models import CustomUser, Projet, Files
+from .models import CustomUser, Projet, Files, Contract
 from django.core.files.storage import FileSystemStorage
 
 # Create your views here.
@@ -196,6 +197,7 @@ def connected(request):
 
     return render(request, 'connected.html',{'form':form, 'user':request.user})
 
+<<<<<<< HEAD
 def simple_upload(request):
 	if request.method == 'POST':
 		form = FileForm(request.POST, request.FILES)
@@ -214,3 +216,46 @@ def download(request, project_key, document_key):
 
     else:
         valide = 'Veuillez vous connecter pour accéder à cette fonctionnalité.'
+=======
+
+def contract(request, uidb32):
+    if request.user.is_authenticated():
+        if Projet.objects.filter(key=uidb32).exists():
+            if Contract.objects.filter(projet_key=uidb32).exists():
+                contract =  Contract.objects.get(projet_key=uidb32)
+                stateContract = True
+            else:
+                contract=""
+                addContract = "Il n'y a pas encore de contrat pour ce projet."
+                stateContract = False
+                return render(request, 'contract.html',{'contract':contract ,'addContract':addContract,'stateContract':stateContract})
+        else:
+            valide = "Le Projet n'existe pas."
+            return render(request, 'project.html',{'valide':valide})
+
+        user = CustomUser.objects.all()
+        for i in user:
+            if project.prestataire == i.email:
+                prestataire = i.username
+            if project.client == i.email:
+                client = i.username
+            if project.professionnel == i.email:
+                professionnel = i.username
+
+        if request.user.username != prestataire and request.user.username != client and request.user.username != professionnel :
+            valide = "Vous n'avez pas accès à ce projet."
+            return render(request, 'project.html',{'valide':valide})
+        if request.user.typeUser ==prestataire :
+            valide = "Vous n'avez pas accès à ce projet."
+            return render(request, 'project.html',{'valide':valide})
+        if request.method == "POST":
+            form = ContractForm()
+            new_contract = form.save(commit=False)
+            new_contract.key = uidb32
+            new_contract.save()
+            return render(request, 'contract.html', {'contract':contract , 'addContract':addContract, 'stateContract':stateContract})
+        return render(request, 'contract.html', {'contract':contract , 'addContract':addContract, 'stateContract':stateContract})
+    else:
+        valide = "Veuillez vous connecter pour voir cette page."
+        return render(request, 'project.html',{'valide':valide})
+>>>>>>> a6e00360a1c3d290f40ee0a0722b3d0cd1261478

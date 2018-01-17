@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .models import Projet
 from .models import CustomUser
 from .models import Files
+from .models import Contract
 
 PRO_CHOICES = (('Contrat', 'Contrat'),
 	('Devis', 'Devis'),
@@ -40,6 +41,10 @@ class NewProjectForm(forms.ModelForm):
 		fields = ('titre','client','prestataire','professionnel','description','prix','date_fin')
 
 
+class ContractForm(forms.ModelForm):
+	class Meta:
+		model = Contract 
+		fields = ('title', 'text',)
 
     
 
