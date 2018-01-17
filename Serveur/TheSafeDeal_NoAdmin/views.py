@@ -205,3 +205,12 @@ def simple_upload(request):
 	else:
 		form = FileForm()
 	return render(request, 'simple_upload.html', {'form': form})
+
+def download(request, project_key, document_key):
+    if request.user.is_authenticated():
+        utilisateur = CustomUser.objects.get(username=request.user)
+        if request.method == 'POST':
+            pass
+
+    else:
+        valide = 'Veuillez vous connecter pour accéder à cette fonctionnalité.'

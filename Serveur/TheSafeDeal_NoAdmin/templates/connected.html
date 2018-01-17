@@ -70,8 +70,8 @@
 	     	<td>{{ projet.prix }}</td>
 	     	<td>{{ projet.date_debut|date:"d M Y" }}</td>
 	     	<td>{{ projet.date_fin|date:"d M Y" }}</td>
-	     	<td><a href="{% url 'connected' %}?key={{ projet.key }}&validate=True"><img src="{% static 'img/accepter.jpg' %}"/></a></td>
-	     	<td><a href="{% url 'connected' %}?key={{ projet.key }}&validate=False"><img src="{% static 'img/refuser.jpg' %}"/></a></td>
+	     	<td><a href="{% url 'connected' %}?key={{ projet.key }}&validate=True"><img title="Accepter ce projet" src="{% static 'img/accepter.jpg' %}"/></a></td>
+	     	<td><a href="{% url 'connected' %}?key={{ projet.key }}&validate=False"><img title="Refuser ce projet" src="{% static 'img/refuser.jpg' %}"/></a></td>
 	    </tr>
 		{% endfor %}
 	     
