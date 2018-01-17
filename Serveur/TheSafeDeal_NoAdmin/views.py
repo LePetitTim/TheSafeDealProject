@@ -197,7 +197,6 @@ def connected(request):
 
     return render(request, 'connected.html',{'form':form, 'user':request.user})
 
-<<<<<<< HEAD
 def simple_upload(request):
 	if request.method == 'POST':
 		form = FileForm(request.POST, request.FILES)
@@ -216,7 +215,6 @@ def download(request, project_key, document_key):
 
     else:
         valide = 'Veuillez vous connecter pour accéder à cette fonctionnalité.'
-=======
 
 def contract(request, uidb32):
     if request.user.is_authenticated():
@@ -258,4 +256,4 @@ def contract(request, uidb32):
     else:
         valide = "Veuillez vous connecter pour voir cette page."
         return render(request, 'project.html',{'valide':valide})
->>>>>>> a6e00360a1c3d290f40ee0a0722b3d0cd1261478
+
