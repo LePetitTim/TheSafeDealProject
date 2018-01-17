@@ -94,7 +94,8 @@
 		     	<td>{{ file.typeName }}</td>
 		     	<td>{{ file.uploaded_by }}</td>
 		     	<td>{{ file.upload_date }}</td>
-		     	<form method='post' action=/download/{{ file.document }}>
+		     	<form method='post' action=/download/{{ projet.key }}/{{ file.projet_key }}>
+		     		{% csrf_token %}
 		     		<td><input type="submit" title="Télécharger" name="download" value="  " style="background-image:url({% static 'img/download.jpg' %});cursor:pointer;"/></td>
 		     	</form>
 		    </tr>
