@@ -151,6 +151,10 @@ def connected(request):
                 new_project.key = get_random_string(length=32)
                 new_project.date_debut = timezone.now()
 
+                if utilisateur.email != cleaned_info['client'] and utilisateur.email != cleaned_info['professionnel'] and utilisateur.email != cleaned_info['prestataire'] :
+                    error = "Vous ne pouvez pas créer un projet sans en faire partie! Voyons..."
+                    return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects}) 
+
                 if CustomUser.objects.filter(email = cleaned_info['client']).exists() and CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
                     if cleaned_info['prestataire'] == '':
                         cli = CustomUser.objects.get(email = cleaned_info['client'])
@@ -159,6 +163,7 @@ def connected(request):
                             new_project.save()
                             cli.add_project(new_project.key)
                             pro.add_project(new_project.key)
+                            os.mkdir(settings.MEDIA_ROOT+"/"+new_project.key)
                             return redirect(connected)
                         else:
                             error = "Oups! L'adresse email entrée du Professionnel ou Client ne correpond pas à la bonne personne!"
@@ -173,6 +178,7 @@ def connected(request):
                                 pre.add_project(new_project.key)
                                 pro.add_project(new_project.key)
                                 cli.add_project(new_project.key)
+                                os.mkdir(settings.MEDIA_ROOT+"/"+new_project.key)
                                 return redirect(connected)
                             else:
                                 error = "Oups! L'adresse email entrée du Professionnel ou Prestataire ou Client ne correpond pas à la bonne entité !"
