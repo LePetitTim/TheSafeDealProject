@@ -98,7 +98,7 @@ class CustomUser(AbstractUser):
     		projet.client = ''
     		projet.save()
 
-    # FONCTION QUI RETURN UNE LISTE CONTENANT DES OBJETS FILES DU PROJET ENTRE ET QUE LE USER PEUT VOIR
+    # FONCTION QUI RETURN UNE LISTE CONTENANT DES OBJETS FILES DU PROJET ET QUE LE USER PEUT VOIR
     def get_user_and_project_files(self, project_key):
     	media_path = settings.MEDIA_ROOT
     	#filelisting = FileListing(media_path, sorting_order='upload_date')
