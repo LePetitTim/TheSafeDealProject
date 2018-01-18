@@ -107,6 +107,8 @@ def showProject(request, uidb32):
                         project.prestataire = email_new_prestataire
                         project.save()
                         new_prestataire.add_project(uidb32)
+                        prestataire = new_prestataire.username
+                        valide = "Prestataire ajouté avec succès!"
                         return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' :documents_list_of_user_of_project})
                         #return redirect(uidb32)
                     else:
@@ -122,12 +124,13 @@ def showProject(request, uidb32):
                     new_document.original_name = request.FILES['document']
                     new_document.key = get_random_string(length=32)
                     new_document.save()
+                    documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
                     valide = "Votre document a bien été uploadé !"
             else:
                 valide = "Aucun utilisateur trouvé à cette adresse email."
                 return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
 
-        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
+        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : sorted(documents_list_of_user_of_project, key=lambda files: files.upload_date, reverse=True)})
     else:
         valide = "Veuillez vous connecter pour voir cette page."
         return render(request, 'project.html',{'valide':valide})
