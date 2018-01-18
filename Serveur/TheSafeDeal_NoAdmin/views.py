@@ -122,6 +122,7 @@ def showProject(request, uidb32):
                     new_document.original_name = request.FILES['document']
                     new_document.key = get_random_string(length=32)
                     new_document.save()
+                    valide = "Votre document a bien été uploadé !"
             else:
                 valide = "Aucun utilisateur trouvé à cette adresse email."
                 return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})

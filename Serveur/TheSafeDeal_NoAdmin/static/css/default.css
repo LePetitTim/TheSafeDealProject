@@ -78,6 +78,15 @@ th {
     margin-top: 30px;
 }
 
+.upload {
+    border-color:black;
+    display: inline-block;
+    vertical-align: top;
+    padding: 12px 20px;
+    margin: 4px 2px;
+    border-width: 2px;
+    border-style: solid;
+}
 
 .animate {
     -webkit-animation: animatezoom 0.6s;
@@ -106,6 +115,8 @@ th {
     font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
+    vertical-align: top;
+    margin-top: 5px;
 }
 
 .cancelbtn {

@@ -20,28 +20,32 @@
 
 	<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-	    <input type="file" name="document" required>
-	    {% if user.typeUser == 'Client' %}
-	    <select id="monselect" name="typeName" required>
-			<option value="documents_contrat">Documents nécessaires au contrat</option> 
-			<option value="photos" selected>Photos</option>
-		</select>
-	    {% elif user.typeUser == 'Prestataire' %}
-	    <select id="monselect" name="typeName" required>
-			<option value="devis">Devis</option> 
-			<option value="facture" selected>Facture</option>
-			<option value="photos">Photos</option> 
-			<option value="avancee_pre" selected>Avancée du projet</option>
-		</select>
-	    {% elif user.typeUser == 'Professionnel'%}
-	    <select id="monselect" name="typeName" required>
-			<option value="demande_travaux">Demande de travaux</option> 
-			<option value="contrat" selected>Contrat du projet</option>
-			<option value="photos" selected>Photos</option>
-			<option value="avancee_pro" selected>Avancée du projet</option>
-		</select>
-	    {% endif %}
+    	<div class="upload">
+	    	<label for="lol" title="Choisissez un document à upload" style="cursor:pointer;margin-right: 3px;">Parcourir</label>
+		    <input type="file" name="document" id="lol" style="display:none" required>
+		    {% if user.typeUser == 'Client' %}
+		    <select id="monselect" name="typeName" title="Définissez de quel type de document il s'agit." required>
+				<option value="documents_contrat">Documents nécessaires au contrat</option> 
+				<option value="photos" selected>Photos</option>
+			</select>
+		    {% elif user.typeUser == 'Prestataire' %}
+		    <select id="monselect" name="typeName" title="Définissez de quel type de document il s'agit." required>
+				<option value="devis">Devis</option> 
+				<option value="facture" selected>Facture</option>
+				<option value="photos">Photos</option> 
+				<option value="avancee_pre" selected>Avancée du projet</option>
+			</select>
+		    {% elif user.typeUser == 'Professionnel'%}
+		    <select id="monselect" name="typeName" title="Définissez de quel type de document il s'agit." required>
+				<option value="demande_travaux">Demande de travaux</option> 
+				<option value="contrat" selected>Contrat du projet</option>
+				<option value="photos" selected>Photos</option>
+				<option value="avancee_pro" selected>Avancée du projet</option>
+			</select>
+		    {% endif %}
+		</div>
 	    <button class="prestataire_button">Upload</button>
+	    
 	</form>
 	<table>
 	</table>
