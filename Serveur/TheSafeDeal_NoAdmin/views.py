@@ -19,7 +19,13 @@ from django import forms
 from django.contrib.auth import get_user_model
 from .models import CustomUser, Projet, Files, Contract
 from django.core.files.storage import FileSystemStorage
+<<<<<<< HEAD
 from django.core.exceptions import ObjectDoesNotExist
+=======
+from django.conf import settings
+import os
+
+>>>>>>> 28f23c9860ceb715db6c7266f01ecb7c974afeb9
 # Create your views here.
 
 def about(request):
@@ -105,6 +111,8 @@ def showProject(request, uidb32):
                         project.prestataire = email_new_prestataire
                         project.save()
                         new_prestataire.add_project(uidb32)
+                        prestataire = new_prestataire.username
+                        valide = "Prestataire ajouté avec succès!"
                         return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' :documents_list_of_user_of_project})
                         #return redirect(uidb32)
                     else:
@@ -120,11 +128,13 @@ def showProject(request, uidb32):
                     new_document.original_name = request.FILES['document']
                     new_document.key = get_random_string(length=32)
                     new_document.save()
+                    documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
+                    valide = "Votre document a bien été uploadé !"
             else:
                 valide = "Aucun utilisateur trouvé à cette adresse email."
                 return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
 
-        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
+        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : sorted(documents_list_of_user_of_project, key=lambda files: files.upload_date, reverse=True)})
     else:
         valide = "Veuillez vous connecter pour voir cette page."
         return render(request, 'project.html',{'valide':valide})
@@ -145,6 +155,10 @@ def connected(request):
                 new_project.key = get_random_string(length=32)
                 new_project.date_debut = timezone.now()
 
+                if utilisateur.email != cleaned_info['client'] and utilisateur.email != cleaned_info['professionnel'] and utilisateur.email != cleaned_info['prestataire'] :
+                    error = "Vous ne pouvez pas créer un projet sans en faire partie! Voyons..."
+                    return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects}) 
+
                 if CustomUser.objects.filter(email = cleaned_info['client']).exists() and CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
                     if cleaned_info['prestataire'] == '':
                         cli = CustomUser.objects.get(email = cleaned_info['client'])
@@ -153,6 +167,7 @@ def connected(request):
                             new_project.save()
                             cli.add_project(new_project.key)
                             pro.add_project(new_project.key)
+                            os.mkdir(settings.MEDIA_ROOT+"/"+new_project.key)
                             return redirect(connected)
                         else:
                             error = "Oups! L'adresse email entrée du Professionnel ou Client ne correpond pas à la bonne personne!"
@@ -167,6 +182,7 @@ def connected(request):
                                 pre.add_project(new_project.key)
                                 pro.add_project(new_project.key)
                                 cli.add_project(new_project.key)
+                                os.mkdir(settings.MEDIA_ROOT+"/"+new_project.key)
                                 return redirect(connected)
                             else:
                                 error = "Oups! L'adresse email entrée du Professionnel ou Prestataire ou Client ne correpond pas à la bonne entité !"
@@ -201,10 +217,28 @@ def download(request, project_key, document_key):
     if request.user.is_authenticated():
         utilisateur = CustomUser.objects.get(username=request.user)
         if request.method == 'POST':
-            pass
+            if request.POST['download']:
+                if Files.objects.filter(key=document_key).exists() :
+                    document = Files.objects.get(key=document_key)
+                else:
+                    redirect(showProject)
+                if Projet.objects.filter(key=project_key).exists():
+                    projet = Projet.objects.get(key=project_key)
+                else:
+                    redirect(showProject)
+                if document in utilisateur.get_user_and_project_files(project_key):
+                    with open(settings.MEDIA_ROOT+"/"+str(document.document), 'rb') as fh:
+                        response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+                        response['Content-Disposition'] = 'inline; filename=' + document.original_name
+                        return response
+                else:
+                    valide = "Vous n'avez pas les droits d'accès à ce fichier."
+                    return render(request, 'project.html',{'valide':valide})
 
+        return redirect("/project/"+project_key)
     else:
         valide = 'Veuillez vous connecter pour accéder à cette fonctionnalité.'
+        return render(request, 'project.html',{'valide':valide})
 
 def contract(request, uidb32):
 	save = "False"
