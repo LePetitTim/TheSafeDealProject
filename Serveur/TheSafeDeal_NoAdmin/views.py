@@ -298,7 +298,6 @@ def contract(request, uidb32):
 						response['Content-Disposition'] = 'inline; filename=contrat.txt'
 						return response
 			else:
-
 				user = CustomUser.objects.all()					
 				if Projet.objects.filter(key=uidb32).exists():
 					if Contract.objects.filter(projet_key=uidb32).exists():
@@ -324,7 +323,7 @@ def contract(request, uidb32):
 						response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
 						response['Content-Disposition'] = 'inline; filename=contrat.txt'
 						return response
-                        
+
 			if Projet.objects.filter(key=uidb32).exists():
 				if Contract.objects.filter(projet_key=uidb32).exists():
 					contract =  Contract.objects.get(projet_key=uidb32)
