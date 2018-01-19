@@ -5,7 +5,7 @@
 {% block content %}
 
 
-	{{ addContract }}
+	{{ error }}
 	
 	
 <form method="POST" class="post-form">
@@ -14,17 +14,20 @@
 	{{ contract.title }}
 	{{ contract.text }}
 	{{ contract.created_date}}
-	<button type="submit" name="delete" class="save btn btn-default">Delete</button>
+	
 	{% if form != Null %}
-		<h1>New contract</h1>	
+		<h1>Create a new contract :</h1>	
 		{{ form }}
 		<button type="submit" name="new" class="save btn btn-default">Save</button>
 		
 	{% endif %}
-	{% if save == "True" %}
+	
+	{% if save == True %}
 		<button type="submit" name="edit" class="save btn btn-default">Edit</button>
+		<button type="submit" name="delete" class="save btn btn-default">Delete</button>
 	{% endif %}
-	{% if save == "False" %}
+	
+	{% if save == False %}
 		<button type="submit" name="edit" class="save btn btn-default">Save</button>
 	{% endif %}
 	
