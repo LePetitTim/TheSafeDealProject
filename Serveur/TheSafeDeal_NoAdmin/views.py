@@ -275,8 +275,20 @@ def contract(request, uidb32):
 			return render(request, 'project.html', {'valide':valide})
 		else:
 			form = ContractForm()
+			user = CustomUser.objects.all()
+			for i in user:
+				if project.prestataire == i.email:
+					prestataire = i.username
+				if project.client == i.email:
+					client = i.username
+				if project.professionnel == i.email:
+					professionnel = i.username
+					
 			if Projet.objects.filter(key=uidb32).exists():
 				if Contract.objects.filter(projet_key=uidb32).exists():
+					if request.user.typeUser ==prestataire :
+						valide = "Vous n'avez pas accès à ce projet."
+						return render(request, 'project.html',{'valide':valide})
 					contract =  Contract.objects.get(projet_key=uidb32)
 					return render(request, 'contract.html', {'contract':contract,'save':save})
 				else:
@@ -286,22 +298,6 @@ def contract(request, uidb32):
 			else:
 				valide = "Le Projet n'existe pas."
 				return render(request, 'project.html',{'valide':valide})
-
-			user = CustomUser.objects.all()
-			for i in user:
-				if project.prestataire == i.email:
-					prestataire = i.username
-				if project.client == i.email:
-					client = i.username
-				if project.professionnel == i.email:
-					professionnel = i.username
-			if request.user.username != prestataire and request.user.username != client and request.user.username != professionnel :
-				valide = "Vous n'avez pas accès à ce projet."
-				return render(request, 'project.html',{'valide':valide})
-			if request.user.typeUser ==prestataire :
-				valide = "Vous n'avez pas accès à ce projet."
-				return render(request, 'project.html',{'valide':valide})
-			
 	else:
 		valide = "Veuillez vous connecter pour voir cette page."
 		return render(request, 'project.html',{'valide':valide})
