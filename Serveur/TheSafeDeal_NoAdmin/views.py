@@ -288,15 +288,8 @@ def contract(request, uidb32):
 				valide = "Le contrat a été supprimé"
 				return render(request, 'project.html', {'valide':valide})
 			elif request.method == "POST" and "download" in request.POST:
-
-
-
-
-
-
-
+				pass
 			else:
-
 				user = CustomUser.objects.all()					
 				if Projet.objects.filter(key=uidb32).exists():
 					if Contract.objects.filter(projet_key=uidb32).exists():
@@ -313,11 +306,7 @@ def contract(request, uidb32):
 					return render(request, 'project.html',{'valide':valide})
 		elif request.user.typeUser == 'Client':
 			if request.method == "POST" and 'download' in request.POST:
-
-
-
-				
-
+				pass
 			if Projet.objects.filter(key=uidb32).exists():
 				if Contract.objects.filter(projet_key=uidb32).exists():
 					contract =  Contract.objects.get(projet_key=uidb32)
