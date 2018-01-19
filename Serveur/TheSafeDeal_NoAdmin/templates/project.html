@@ -14,7 +14,8 @@
 				<button class="edit_contract">Editer contrat</button>
 			</form>
 		</div>
-	{% elif user.typeUser == 'Client' and user.username ==  %}
+	{% endif %}
+	{% if user.typeUser == 'Client' and user.username == nameClient %}
 		<div>
 			<form action="/project/{{ projet.key }}/contract" style="margin: 0px;">
 				<button class="edit_contract">Voir contrat</button>

@@ -288,13 +288,15 @@ def contract(request, uidb32):
 				valide = "Le contrat a été supprimé"
 				return render(request, 'project.html', {'valide':valide})
 			elif request.method == "POST" and "download" in request.POST:
+				new_contract = Contract.objects.get(projet_key=project.key)
+				fichier = open(settings.MEDIA_ROOT +"/"+project.key+"/"+"contrat.txt", "w")
+				fichier.write("Créé le "+str(new_contract.created_date)+"\n"+new_contract.title+"\n \n"+new_contract.text)
+				fichier.close()
 
-
-
-
-
-
-
+				with open(settings.MEDIA_ROOT +"/"+project.key+"/"+"contrat.txt", 'rb') as fh:
+						response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+						response['Content-Disposition'] = 'inline; filename=contrat.txt'
+						return response
 			else:
 
 				user = CustomUser.objects.all()					
@@ -313,11 +315,16 @@ def contract(request, uidb32):
 					return render(request, 'project.html',{'valide':valide})
 		elif request.user.typeUser == 'Client':
 			if request.method == "POST" and 'download' in request.POST:
+				new_contract = Contract.objects.get(projet_key=project.key)
+				fichier = open(settings.MEDIA_ROOT +"/"+project.key+"/"+"contrat.txt", "w")
+				fichier.write("Créé le "+str(new_contract.created_date)+"\n"+new_contract.title+"\n \n"+new_contract.text)
+				fichier.close()
 
-
-
-				
-
+				with open(settings.MEDIA_ROOT +"/"+project.key+"/"+"contrat.txt", 'rb') as fh:
+						response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+						response['Content-Disposition'] = 'inline; filename=contrat.txt'
+						return response
+                        
 			if Projet.objects.filter(key=uidb32).exists():
 				if Contract.objects.filter(projet_key=uidb32).exists():
 					contract =  Contract.objects.get(projet_key=uidb32)
