@@ -11,6 +11,8 @@ button:hover {
     opacity: 0.8;
 }
 
+
+
 ul {
     list-style-type: none;
     margin: 0;
@@ -103,6 +105,28 @@ th {
     to {transform: scale(1)}
 }
 
+.edit_contract {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    vertical-align: top;
+    margin-top: 5px;
+    float:right;
+    text-decoration-color: white;
+}
+
+.add_prestataire {
+    display: inline-block;
+    vertical-align: top;
+    width: 50%;
+}
 
 .prestataire_button {
     background-color: #4CAF50;
@@ -117,7 +141,24 @@ th {
     cursor: pointer;
     vertical-align: top;
     margin-top: 5px;
+    margin-bottom: 3px;
 }
+
+.upload_document {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    vertical-align: top;
+    margin-top: 5px;
+}
+
 
 .cancelbtn {
     width: auto;

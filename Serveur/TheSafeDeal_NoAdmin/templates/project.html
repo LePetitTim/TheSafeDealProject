@@ -7,13 +7,22 @@
 <center><strong>{{ valide }}</strong></center>
 {% endif %}
 
-{% if projet and user.is_authenticated %}
-	{% if user.typeUser == 'Professionnel' and namePrestataire == '' %}
+
+	{% if user.typeUser == 'Professionnel' and user.username == nameProfessionnel %}
 		<div>
+			<form action="/project/{{ projet.key }}/contract" style="margin: 0px;">
+				<button class="edit_contract">Editer contrat</button>
+			</form>
+		</div>
+	{% endif %}
+	
+{% if projet and user.is_authenticated %}
+	{% if user.typeUser == 'Professionnel' and user.username == nameProfessionnel and namePrestataire == '' %}
+		<div class="add_prestataire">
 			<form method="post">
 				{% csrf_token %}
 				<button class="prestataire_button">+</button>
-				<input type="email" name="email" placeholder="Entrez l'email du Prestataire à ajouter au projet" style="width: 26%">
+				<input style="padding-top: 13px; padding-bottom: 13px; margin-top: 5px; width: 53%" type="email" name="email" placeholder="Entrez l'email du Prestataire à ajouter au projet">
 			</form>
 		</div>
 	{% endif %}
@@ -44,9 +53,11 @@
 			</select>
 		    {% endif %}
 		</div>
-	    <button class="prestataire_button">Upload</button>
+	    <button class="upload_document">Upload un document</button>
 	    
 	</form>
+
+
 	<table>
 	</table>
 	<table>
