@@ -241,6 +241,18 @@ def contract(request, uidb32):
 	save = False
 	contractExist=False
 	if request.user.is_authenticated():
+		project = Projet.objects.get(key=uidb32)
+		user = CustomUser.objects.all()
+        for i in user:
+            if project.prestataire == i.email:
+                prestataire = i.username
+            if project.client == i.email:
+                client = i.username
+            if project.professionnel == i.email:
+                professionnel = i.username
+        if request.user.username != prestataire and request.user.username != client and request.user.username != professionnel :
+            valide = "Vous n'avez pas accès à ce projet."
+            return render(request, 'project.html',{'valide':valide})
 		if request.user.typeUser == 'Prestataire':
 			valide = "Vous n'avez pas accès aux contrats."
 			return render(request, 'project.html',{'valide':valide})
