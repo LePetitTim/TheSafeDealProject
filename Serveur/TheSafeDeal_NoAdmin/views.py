@@ -19,7 +19,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from .models import CustomUser, Projet, Files, Contract
 from django.core.files.storage import FileSystemStorage
-
+from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
 
 def about(request):
@@ -207,7 +207,6 @@ def download(request, project_key, document_key):
         valide = 'Veuillez vous connecter pour accéder à cette fonctionnalité.'
 
 def contract(request, uidb32):
-	post = get_object_or_404(Contract, projet_key=uidb32)
 	save = "False"
 	if request.user.is_authenticated():
 		if request.method == "POST" and 'new' in request.POST:
@@ -217,8 +216,10 @@ def contract(request, uidb32):
 				new_contract.projet_key = uidb32
 				new_contract.created_date = timezone.now()
 				new_contract.save()
-				return render(request, 'contract.html', {'contract':new_contract})
+				save = "True"
+				return render(request, 'contract.html', {'contract':new_contract, 'save':save})
 		elif request.method == "POST" and "edit" in request.POST:
+			post = get_object_or_404(Contract, projet_key=uidb32)
 			form = ContractForm(request.POST, instance=post)
 			if form.is_valid():
 				new_contract = form.save(commit=False)
@@ -229,12 +230,21 @@ def contract(request, uidb32):
 				return render(request, 'contract.html', {'contract':new_contract, 'save':save})	 
 			form = ContractForm(instance=post)
 			return render(request, 'contract.html', {'contract':form,'save':save})
+		elif request.method == "POST" and "delete" in request.POST:
+			try:
+				instance = Contract.objects.get(projet_key=uidb32)
+				instance.delete()
+				
+			except ObjectDoesNotExist:
+				pass
+			valide = "Le contrat a été supprimé"
+			return render(request, 'project.html', {'valide':valide})
 		else:
 			form = ContractForm()
 			if Projet.objects.filter(key=uidb32).exists():
 				if Contract.objects.filter(projet_key=uidb32).exists():
 					contract =  Contract.objects.get(projet_key=uidb32)
-					return render(request, 'contract.html', {'contract':contract})
+					return render(request, 'contract.html', {'contract':contract,'save':save})
 				else:
 					contract=""
 					error = "Il n'y a pas encore de contrat pour ce projet."
