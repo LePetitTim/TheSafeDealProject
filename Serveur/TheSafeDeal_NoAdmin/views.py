@@ -121,7 +121,7 @@ def showProject(request, uidb32):
                     new_document = form.save(commit=False)
                     new_document.projet_key = uidb32
                     new_document.typeName = request.POST['typeName']
-                    new_document.uploaded_by = CustomUser.objects.get(username=request.user).username + " ("+ CustomUser.objects.get(username=request.user).typeUser +")"
+                    new_document.uploaded_by = CustomUser.objects.get(username=request.user).username
                     new_document.original_name = request.FILES['document']
                     new_document.key = get_random_string(length=32)
                     new_document.save()
@@ -130,6 +130,16 @@ def showProject(request, uidb32):
             else:
                 valide = "Aucun utilisateur trouvé à cette adresse email."
                 return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
+
+        if request.method == "GET":
+            if 'delete' in request.GET :
+                if Files.objects.filter(key=request.GET['delete']):
+                    delete_file = Files.objects.get(key=request.GET['delete'])
+                    if utilisateur.username == delete_file.uploaded_by :
+                        delete_file.delete()
+                        os.remove(settings.MEDIA_ROOT+"/"+str(delete_file.document))
+                        documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
+                return redirect("/project/"+project.key)
 
         return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : sorted(documents_list_of_user_of_project, key=lambda files: files.upload_date, reverse=True)})
     else:
