@@ -248,63 +248,73 @@ def download(request, project_key, document_key):
         return render(request, 'project.html',{'valide':valide})
 
 def contract(request, uidb32):
-	save = "False"
+	save = False
+	contractExist=False
 	if request.user.is_authenticated():
-		if request.method == "POST" and 'new' in request.POST:
-			form = ContractForm(request.POST)
-			if form.is_valid():
-				new_contract = form.save(commit=False)
-				new_contract.projet_key = uidb32
-				new_contract.created_date = timezone.now()
-				new_contract.save()
-				save = "True"
-				return render(request, 'contract.html', {'contract':new_contract, 'save':save})
-		elif request.method == "POST" and "edit" in request.POST:
-			post = get_object_or_404(Contract, projet_key=uidb32)
-			form = ContractForm(request.POST, instance=post)
-			if form.is_valid():
-				new_contract = form.save(commit=False)
-				new_contract.projet_key = uidb32
-				new_contract.created_date = timezone.now()
-				new_contract.save()
-				save = "True"
-				return render(request, 'contract.html', {'contract':new_contract, 'save':save})	 
-			form = ContractForm(instance=post)
-			return render(request, 'contract.html', {'contract':form,'save':save})
-		elif request.method == "POST" and "delete" in request.POST:
-			try:
-				instance = Contract.objects.get(projet_key=uidb32)
-				instance.delete()
-				
-			except ObjectDoesNotExist:
-				pass
-			valide = "Le contrat a été supprimé"
-			return render(request, 'project.html', {'valide':valide})
-		else:
-			form = ContractForm()
-			user = CustomUser.objects.all()
-			for i in user:
-				if project.prestataire == i.email:
-					prestataire = i.username
-				if project.client == i.email:
-					client = i.username
-				if project.professionnel == i.email:
-					professionnel = i.username
+		if request.user.typeUser == 'Prestataire':
+			valide = "Vous n'avez pas accès aux contrats."
+			return render(request, 'project.html',{'valide':valide})
+		elif request.user.typeUser == 'Professionnel':
+			if request.method == "POST" and 'new' in request.POST:
+				form = ContractForm(request.POST)
+				if form.is_valid():
+					new_contract = form.save(commit=False)
+					new_contract.projet_key = uidb32
+					new_contract.created_date = timezone.now()
+					new_contract.save()
+					save = True
+					return render(request, 'contract.html', {'contract':new_contract, 'save':save})
+			elif request.method == "POST" and "edit" in request.POST:
+				post = get_object_or_404(Contract, projet_key=uidb32)
+				form = ContractForm(request.POST, instance=post)
+				if form.is_valid():
+					new_contract = form.save(commit=False)
+					new_contract.projet_key = uidb32
+					new_contract.created_date = timezone.now()
+					new_contract.save()
+					save = True
+					return render(request, 'contract.html', {'contract':new_contract, 'save':save})	 
+				form = ContractForm(instance=post)
+				return render(request, 'contract.html', {'contract':form,'save':save})
+			elif request.method == "POST" and "delete" in request.POST:
+				try:
+					instance = Contract.objects.get(projet_key=uidb32)
+					instance.delete()
 					
+				except ObjectDoesNotExist:
+					pass
+				valide = "Le contrat a été supprimé"
+				return render(request, 'project.html', {'valide':valide})
+			else:
+
+				user = CustomUser.objects.all()					
+				if Projet.objects.filter(key=uidb32).exists():
+					if Contract.objects.filter(projet_key=uidb32).exists():
+						contract =  Contract.objects.get(projet_key=uidb32)
+						contractExist = 'True'
+						return render(request, 'contract.html', {'contract':contract,'save':save,'Exist':contractExist})
+					else:
+						form = ContractForm()
+						contract=""
+						error = "Il n'y a pas encore de contrat pour ce projet."
+						return render(request, 'contract.html',{'contract':contract ,'error':error, 'form':form})
+				else:
+					valide = "Le Projet n'existe pas."
+					return render(request, 'project.html',{'valide':valide})
+		elif request.user.typeUser == 'Client':
 			if Projet.objects.filter(key=uidb32).exists():
 				if Contract.objects.filter(projet_key=uidb32).exists():
-					if request.user.typeUser ==prestataire :
-						valide = "Vous n'avez pas accès à ce projet."
-						return render(request, 'project.html',{'valide':valide})
 					contract =  Contract.objects.get(projet_key=uidb32)
-					return render(request, 'contract.html', {'contract':contract,'save':save})
+					contractExist = 'True'
+					return render(request, 'contract.html', {'contract':contract,'Exist':contractExist})
 				else:
 					contract=""
 					error = "Il n'y a pas encore de contrat pour ce projet."
-					return render(request, 'contract.html',{'contract':contract ,'error':error, 'form':form})
+					return render(request, 'contract.html',{'contract':contract ,'error':error})
 			else:
 				valide = "Le Projet n'existe pas."
 				return render(request, 'project.html',{'valide':valide})
+
 	else:
 		valide = "Veuillez vous connecter pour voir cette page."
 		return render(request, 'project.html',{'valide':valide})
