@@ -19,13 +19,10 @@ from django import forms
 from django.contrib.auth import get_user_model
 from .models import CustomUser, Projet, Files, Contract
 from django.core.files.storage import FileSystemStorage
-<<<<<<< HEAD
 from django.core.exceptions import ObjectDoesNotExist
-=======
 from django.conf import settings
 import os
 
->>>>>>> 28f23c9860ceb715db6c7266f01ecb7c974afeb9
 # Create your views here.
 
 def about(request):
