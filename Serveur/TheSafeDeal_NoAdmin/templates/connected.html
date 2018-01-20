@@ -3,7 +3,7 @@
 <head>
         <meta charset="utf-8" />
         <link rel="stylesheet" href="{% static 'css/connected.css' %}" />
-		<script type="text/javascript" src="{% static 'js/display_form.js' %}"></script>	
+		<script type="text/javascript" src="{% static 'js/display_form_new_project.js' %}"></script>	
         <title>Connexion</title>
 </head>
 
@@ -129,7 +129,7 @@
 
 <div id="id01" class="modal">
   
-  <form class="modal-content animate" action="{% url 'connected' %}" method="post">
+  <form class="modal-content animate" action="{% url 'connected' %}" method="post" style="margin-bottom: 10px;">
 	{% csrf_token %}
     <div class="container">
 

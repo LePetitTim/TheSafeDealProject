@@ -102,34 +102,58 @@
 	</table>
 
 	
-		<table>
-			<tr>
-		     <th>Nom du document</th>
-		     <th>Type de document</th>
-		     <th>Uploadé par</th>
-		     <th>Date d'upload</th>
-		    </tr>
-			<tr>
-			{% for file in files %}
-		     	<td>{{ file.original_name }}</td>
-		     	<td>{{ file.typeName }}</td>
-		     	<td>{{ file.uploaded_by }}</td>
-		     	<td>{{ file.upload_date }}</td>
-		     	<form method='post' action=/download/{{ projet.key }}/{{ file.key }}>
-		     		{% csrf_token %}
-		     		<td><input type="submit" title="Télécharger" name="download" value="  " style="background-image:url({% static 'img/download.jpg' %});cursor:pointer;"/></td>
-		     	</form>
-				{% if user.username == file.uploaded_by %}
-					<td><a href="/project/{{ projet.key }}?delete={{ file.key }}"><img title="Supprimer ce fichier" src="{% static 'img/refuser.jpg' %}"/></a></td>
-				{% endif %}
-		    </tr>
-			{% endfor %}
-		</table>
-	
+	<table>
+		<tr>
+	     <th>Nom du document</th>
+	     <th>Type de document</th>
+	     <th>Catégorie</th>
+	     <th>Uploadé par</th>
+	     <th>Date d'upload</th>
+	    </tr>
+	    {% for file in files %}
+		<tr>
+			{% if file.extension == 'pdf' or file.extension == 'PDF' or file.extension == 'jpg' or file.extension == 'jpeg' or file.extension == 'png' or file.extension == 'bmp' or file.extension == 'JPEG' or file.extension == 'PNG' or file.extension == 'JPG' or file.extension == 'BMP' %}
+				<td style="cursor: pointer;" onclick="display_form('{{ file.key }}')">{{ file.original_name }}</td>
+			{% else %}
+				<td title="Aucun aperçu disponible">{{ file.original_name }}</td>
+			{% endif %}
+			<td>{{ file.extension|upper }}</td>
+	     	<td>{{ file.typeName }}</td>
+	     	<td>{{ file.uploaded_by }}</td>
+	     	<td>{{ file.upload_date }}</td>
+	     	<form method='post' action=/download/{{ projet.key }}/{{ file.key }}>
+	     		{% csrf_token %}
+	     		<td><input type="submit" title="Télécharger" name="download" value="  " style="background-image:url({% static 'img/download.jpg' %});cursor:pointer;"/></td>
+	     	</form>
+			{% if user.username == file.uploaded_by %}
+				<td><a href="/project/{{ projet.key }}?delete={{ file.key }}"><img title="Supprimer ce fichier" src="{% static 'img/refuser.jpg' %}"/></a></td>
+			{% endif %}
+
+	    </tr>
+
+		{% if file.extension == 'jpeg' or file.extension == 'png' or file.extension == 'jpg' or file.extension == 'bmp' or file.extension == 'JPEG' or file.extension == 'PNG' or file.extension == 'JPG' or file.extension == 'BMP' %}
+
+	    <div id="{{ file.key }}" class="modal">
+			<img class="img animate" name="plugin" src="/media/{{ projet.key }}/{{ file.key }}.{{ file.extension }}">
+		</div>
+
+		{% endif %}
+
+		{% if file.extension == 'pdf' or file.extension == 'PDF'%}
+
+		<div id="{{ file.key }}" class="modal">
+			<embed class="pdf animate" height="80%" width="100%" name="plugin" src="/media/{{ projet.key }}/{{ file.key }}.{{ file.extension }}" type="application/pdf">
+		</div>
+
+		{% else %}
+
+		{% endif %}
+
+		{% endfor %}
+	</table>
+
 
 {% endif %}
-
-
 
 
 {% endblock %}

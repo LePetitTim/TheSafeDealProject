@@ -123,7 +123,7 @@ class CustomUser(AbstractUser):
 		            result.append(file)
     	elif self.typeUser == 'Professionnel' :
     		for file in fichier :
-	        	if file.typeName == 'contrat' or file.typeName == 'documents_contrat' or file.typeName == 'demande_travaux' or file.typeName == 'photos' or file.typeName == 'avancee_pre' or file.typeName == 'devis' or file.typeName == 'facture':
+	        	if file.typeName == 'contrat' or file.typeName == 'documents_contrat' or file.typeName == 'demande_travaux' or file.typeName == 'photos' or file.typeName == 'avancee_pre' or file.typeName == 'devis' or file.typeName == 'facture' or file.typeName == 'avancee_pro' :
 		            file.original_name = file.remove_extension()
 		            result.append(file)
     	return result
@@ -160,10 +160,31 @@ class Files(models.Model):
 	uploaded_by = models.TextField(max_length=150)
 	original_name = models.TextField(max_length=150)
 	key = models.CharField(max_length=32, unique=True)
+	extension = models.CharField(max_length=20, blank=True)
 
 	def remove_extension(self):
 		return (self.original_name.split(".")[0])
-		
+
+	def get_extension(self):
+		try:
+			return str(self.document).split(".")[-1]
+		except Exception as e:
+			return ""
+
+	def extension_has_uppercase(self):
+		for char in self.extension :
+			if ord(char) >= 65 and ord(char) <= 90 :
+				return True
+		return False
+
+	def put_extension_lowercase_everywhere(self):
+		extension = self.extension
+		for char in extension :
+			if ord(char) >= 65 and ord(char) <= 90 :
+				char = char.replace(char,char(ord(char+27)))
+		return extension
+
+
 class Contract(models.Model):
     projet_key = models.CharField(max_length=32, blank = True, unique= True)
     title = models.CharField(max_length=200)

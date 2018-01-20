@@ -124,6 +124,7 @@ def showProject(request, uidb32):
                     new_document.uploaded_by = CustomUser.objects.get(username=request.user).username
                     new_document.original_name = request.FILES['document']
                     new_document.key = get_random_string(length=32)
+                    new_document.extension = new_document.get_extension()
                     new_document.save()
                     documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
                     valide = "Votre document a bien été uploadé !"
@@ -234,7 +235,7 @@ def download(request, project_key, document_key):
                     redirect(showProject)
                 if document in utilisateur.get_user_and_project_files(project_key):
                     with open(settings.MEDIA_ROOT+"/"+str(document.document), 'rb') as fh:
-                        response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+                        response = HttpResponse(fh.read(), content_type="application/force-download")
                         response['Content-Disposition'] = 'inline; filename=' + document.original_name
                         return response
                 else:
@@ -303,7 +304,7 @@ def contract(request, uidb32):
 				fichier.close()
 
 				with open(settings.MEDIA_ROOT +"/"+project.key+"/"+"contrat.txt", 'rb') as fh:
-						response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+						response = HttpResponse(fh.read(), content_type="application/force-download")
 						response['Content-Disposition'] = 'inline; filename=contrat.txt'
 						return response
 			else:
@@ -329,7 +330,7 @@ def contract(request, uidb32):
 				fichier.close()
 
 				with open(settings.MEDIA_ROOT +"/"+project.key+"/"+"contrat.txt", 'rb') as fh:
-						response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+						response = HttpResponse(fh.read(), content_type="application/force-download")
 						response['Content-Disposition'] = 'inline; filename=contrat.txt'
 						return response
 
