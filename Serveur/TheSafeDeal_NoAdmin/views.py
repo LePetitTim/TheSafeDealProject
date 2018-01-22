@@ -295,7 +295,8 @@ def contract(request, uidb32):
 					new_contract.created_date = timezone.now()
 					new_contract.save()
 					save = True
-					return render(request, 'contract.html', {'contract':new_contract, 'save':save})	 
+					telecharger = True
+					return render(request, 'contract.html', {'contract':new_contract, 'save':save, 'telecharger':telecharger})	 
 				form = ContractForm(instance=post)
 				return render(request, 'contract.html', {'contract':form,'save':save})
 			elif request.method == "POST" and "delete" in request.POST:
@@ -321,10 +322,11 @@ def contract(request, uidb32):
 				user = CustomUser.objects.all()					
 				if Projet.objects.filter(key=uidb32).exists():
 					if Contract.objects.filter(projet_key=uidb32).exists():
+						save = True
 						contract =  Contract.objects.get(projet_key=uidb32)
 						contractExist = 'True'
 						telecharger = True
-						return render(request, 'contract.html', {'contract':contract,'save':save,'Exist':contractExist,'telecharger':telecharger})
+						return render(request, 'contract.html', {'contract':contract,'save':save,'telecharger':telecharger})
 					else:
 						form = ContractForm()
 						contract=""
