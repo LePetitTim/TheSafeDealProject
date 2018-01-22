@@ -305,7 +305,7 @@ def download(request, project_key, document_key):
         return render(request, 'project.html',{'valide':valide})
 
 def contract(request, uidb32):
-    """
+	"""
     Permet d'afficher le contrat d'un projet, permet de le modifier en tant que professionnelle et l'afficher en tant que Client.
 
     Il est egalement possible de le modifier pour le Professionnelle et le telecharger pour le client et le professionnelle.
@@ -436,7 +436,7 @@ def api_token(request):
 				authentification = authenticate(username=username, password=password)
 				if authentification is not None :
 
-					return HttpResponse('{ "token" : '+ token +'}')
+					return HttpResponse('{ "token" : '+ '"'+token_api+'"' +'}')
 				else :
 					return HttpResponse("NO_ACCOUNT")
 		else :
