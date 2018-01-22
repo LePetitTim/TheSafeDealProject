@@ -124,7 +124,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.live.com'
 EMAIL_HOST_USER = 'tim.montety@live.fr'
-EMAIL_HOST_PASSWORD = 'Tim23061995'
+EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'tim.montety@live.fr'
 
 EMAIL_PORT = 25
