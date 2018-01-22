@@ -384,4 +384,3 @@ def api_token(request):
 	
 	return HttpResponse("Veuillez vous déconnecter")
 
-
