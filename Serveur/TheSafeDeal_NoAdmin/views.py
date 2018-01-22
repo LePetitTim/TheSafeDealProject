@@ -367,6 +367,21 @@ def contract(request, uidb32):
 
 
 def api_token(request):
-	return HttpResponse('{ "token" : '+ get_random_string(60) +'}')
+	if not request.user.is_authenticated():
+		if request.method == 'POST':
+			if request.POST['username'] and request.POST['password'] :
+				username = request.POST['username']
+				password = request.POST['password']
+				token_api = get_random_string(length=60)
+				authentification = authenticate(username=username, password=password)
+				if authentification is not None :
+
+					return HttpResponse('{ "token" : '+ token +'}')
+				else :
+					return HttpResponse("NO_ACCOUNT")
+		else :
+			return HttpResponse("NO_POST")
+	
+	return HttpResponse("Veuillez vous déconnecter")
 
 
