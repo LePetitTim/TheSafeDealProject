@@ -23,17 +23,32 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 import os
 
-# Create your views here.
+
+# Definition des vues Django. Permet de recuperer les informations dans la base de donnée, faire les redirections sur les autres pages.
+# L'affichage de la page actuel ...
 
 def about(request):
-    return render(request, 'about.html',{})
+	"""
+	Affiche la page a propos.
+	"""
+	return render(request, 'about.html',{})
 
 def home(request):
+	"""
+	Affiche la page d'accueil
+	"""
 	file = Files.objects.all()
 	customUser = CustomUser.objects.all()
 	return render(request, 'home.html', {'CustomUser' : customUser, 'CustomFile' : file})
 
 def register(request):
+    """
+    Affiche la page registration.
+    SI le formulaire est valide, le compte est crée mais inactif. L'utilisateur doit se connecter à sa boite mail pour activer son compte.
+    (/!\ Serveur SMTP bloqué, besoin de modifier les parametres dans : TheSafeDeal/settings.py pour envoyer sur un serveur SMTP fonctionnel).
+    Envoie un mail avec comme objet : Active ton compte provenant de l'adresse mail du serveur SMTP. Avec comme description la page acc_active_email.html.
+    La page contient un token unique pour l'activation du compte. L'url pour l'activation utilise ce token.
+    """
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
@@ -65,6 +80,9 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 def activate(request, uidb64, token):
+    """
+    Utilisé pour l'activation du compte. Si le token n'existe pas(url crée de toute pièce). Affichage d'un message d'erreur.
+    """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         User = get_user_model()
@@ -80,6 +98,18 @@ def activate(request, uidb64, token):
         return HttpResponse("Le lien d'activation est invalide!")
         
 def showProject(request, uidb32):
+    """
+    Affiche le projet avec la clé uidb32. La clé est unique.
+    Le projet est affiché sous certaines conditions : 
+    - l'utilisateur doit etre authentifié.
+    - le projet doit exister
+    - L'utilisateur doit faire partie du projet.
+    
+    Cette page affiche en détail les fichiers du projet. Les differents éléments utiles provenant du modèle Projet.
+    Possibilité d'ajouter un prestataire si il n'est pas choisie a la création.
+    Possibilité de télécharger les fichiers du projet.
+    Possibilité d'atteindre le contrat de se projet. (voir contract).
+    """
     valide = ""
     client=""
     professionnel=""
@@ -156,6 +186,16 @@ def showProject(request, uidb32):
         return render(request, 'project.html',{'valide':valide})
 
 def connected(request):
+    """
+    Affiche tous les projets de l'utilisateur, permet d'ajouter, d'activer ou refuser un projet.
+    
+    Cette page s'affiche normalement sous certaines conditions : 
+    - l'utilisateur doit etre authentifié.
+
+    Cette page affiche en détail chaque projet de l'utilisateur. Permet également de rajouter un nouveau projet.
+    Si le formulaire pour l'ajout d'un nouveau projet est valide, le projet est inactif et il suffit d'appuyer sur le bouton valider 
+    (et que chaque utilisateur le fasse) pour que le projet soit accepté et visible pour chacun.
+    """
     user = request.user
     if user.is_authenticated() :
         utilisateur = CustomUser.objects.get(username=request.user)
@@ -230,6 +270,14 @@ def connected(request):
     return render(request, 'connected.html',{'form':form, 'user':request.user})
 
 def download(request, project_key, document_key):
+    """
+    Permet de télécharger les fichiers du projet. Chaque projet a son propre dossier avec tous les elements.
+    Cette vue utilise le modele File pour envoyer les fichiers.
+
+    Cette fonctionnalité est possible normalement uniquement lorsque : 
+    - l'utilisateur doit etre authentifié.
+
+    """
     if request.user.is_authenticated():
         utilisateur = CustomUser.objects.get(username=request.user)
         if request.method == 'POST':
@@ -257,6 +305,18 @@ def download(request, project_key, document_key):
         return render(request, 'project.html',{'valide':valide})
 
 def contract(request, uidb32):
+    """
+    Permet d'afficher le contrat d'un projet, permet de le modifier en tant que professionnelle et l'afficher en tant que Client.
+
+    Il est egalement possible de le modifier pour le Professionnelle et le telecharger pour le client et le professionnelle.
+    
+    La page s'affiche est possible normalement uniquement lorsque : 
+    - l'utilisateur est authentifié.
+    - l'utilisateur n'est pas un prestataire
+    - le contrat existe (sauf pour professionnelle -> Formulaire pour la creation d'un nouveau contrat)
+    - le projet existe
+
+    """
 	telecharger = False
 	save = False
 	contractExist=False
