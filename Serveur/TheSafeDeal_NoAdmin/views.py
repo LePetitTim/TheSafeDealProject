@@ -125,8 +125,8 @@ def showProject(request, uidb32):
                     original_name = str(request.FILES['document'])
                     new_document.original_name = original_name
                     new_document.extension = new_document.get_extension()
-                    if len(new_document.original_name) > 30 :
-                        new_document.original_name = str(original_name).replace(original_name,original_name[0:30]+"."+new_document.extension)
+                    if len(original_name) > 20 :
+                        new_document.original_name = str(original_name).replace(original_name,original_name[0:20]+"."+new_document.extension)
                     new_document.key = get_random_string(length=32)
                     new_document.save()
                     documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)

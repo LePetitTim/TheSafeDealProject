@@ -13,7 +13,7 @@
 <ul>
   <li><img src="{% static 'img/logo.jpg' %}" title="Deal With It"></li>
   <li><a href="{% url 'home' %}">Accueil</a></li>
-  <li><a href="{% url 'about' %}">Qui sommes nous ?</a></li>
+  <li><a href="{% url 'about' %}">A propos</a></li>
   {% if user.is_authenticated %}
    <li><a href="{% url 'connected' %}">Mes Projets {{ use }}</a></li>
   {% endif %}
