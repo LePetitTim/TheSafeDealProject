@@ -186,6 +186,16 @@ def showProject(request, uidb32):
         return render(request, 'project.html',{'valide':valide})
 
 def connected(request):
+    """
+    Affiche tous les projets de l'utilisateur, permet d'ajouter, d'activer ou refuser un projet.
+    
+    Cette page s'affiche normalement sous certaines conditions : 
+    - l'utilisateur doit etre authentifié.
+
+    Cette page affiche en détail chaque projet de l'utilisateur. Permet également de rajouter un nouveau projet.
+    Si le formulaire pour l'ajout d'un nouveau projet est valide, le projet est inactif et il suffit d'appuyer sur le bouton valider 
+    (et que chaque utilisateur le fasse) pour que le projet soit accepté et visible pour chacun.
+    """
     user = request.user
     if user.is_authenticated() :
         utilisateur = CustomUser.objects.get(username=request.user)
@@ -260,6 +270,14 @@ def connected(request):
     return render(request, 'connected.html',{'form':form, 'user':request.user})
 
 def download(request, project_key, document_key):
+    """
+    Permet de télécharger les fichiers du projet. Chaque projet a son propre dossier avec tous les elements.
+    Cette vue utilise le modele File pour envoyer les fichiers.
+
+    Cette fonctionnalité est possible normalement uniquement lorsque : 
+    - l'utilisateur doit etre authentifié.
+
+    """
     if request.user.is_authenticated():
         utilisateur = CustomUser.objects.get(username=request.user)
         if request.method == 'POST':
@@ -287,6 +305,18 @@ def download(request, project_key, document_key):
         return render(request, 'project.html',{'valide':valide})
 
 def contract(request, uidb32):
+    """
+    Permet d'afficher le contrat d'un projet, permet de le modifier en tant que professionnelle et l'afficher en tant que Client.
+
+    Il est egalement possible de le modifier pour le Professionnelle et le telecharger pour le client et le professionnelle.
+    
+    La page s'affiche est possible normalement uniquement lorsque : 
+    - l'utilisateur est authentifié.
+    - l'utilisateur n'est pas un prestataire
+    - le contrat existe (sauf pour professionnelle -> Formulaire pour la creation d'un nouveau contrat)
+    - le projet existe
+
+    """
 	telecharger = False
 	save = False
 	contractExist=False
