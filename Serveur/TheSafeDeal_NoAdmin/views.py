@@ -257,6 +257,7 @@ def download(request, project_key, document_key):
         return render(request, 'project.html',{'valide':valide})
 
 def contract(request, uidb32):
+	telecharger = False
 	save = False
 	contractExist=False
 	if request.user.is_authenticated():
@@ -322,7 +323,8 @@ def contract(request, uidb32):
 					if Contract.objects.filter(projet_key=uidb32).exists():
 						contract =  Contract.objects.get(projet_key=uidb32)
 						contractExist = 'True'
-						return render(request, 'contract.html', {'contract':contract,'save':save,'Exist':contractExist})
+						telecharger = True
+						return render(request, 'contract.html', {'contract':contract,'save':save,'Exist':contractExist,'telecharger':telecharger})
 					else:
 						form = ContractForm()
 						contract=""
@@ -347,7 +349,8 @@ def contract(request, uidb32):
 				if Contract.objects.filter(projet_key=uidb32).exists():
 					contract =  Contract.objects.get(projet_key=uidb32)
 					contractExist = 'True'
-					return render(request, 'contract.html', {'contract':contract,'Exist':contractExist})
+					telecharger = True
+					return render(request, 'contract.html', {'contract':contract,'Exist':contractExist,'telecharger':telecharger})
 				else:
 					contract=""
 					error = "Il n'y a pas encore de contrat pour ce projet."

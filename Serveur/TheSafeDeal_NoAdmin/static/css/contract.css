@@ -1,0 +1,190 @@
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    float: left;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-right: 3px;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #111;
+}
+
+li img {
+    height: 46px;
+    width: 60px;
+    display: block;
+    padding-left: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-right: 3px;
+}
+
+table {
+    border-collapse: collapse;
+    width: auto;
+    right: 30px;
+    position: absolute;
+    margin-top: 30px;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+
+.projet {
+    background-color: white;
+    height: auto; 
+    margin-left:32%;
+    margin-top: 20px;
+}
+
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)} 
+    to {-webkit-transform: scale(1)}
+}
+    
+@keyframes animatezoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+}
+
+
+.cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+}
+
+.container {
+    padding: 16px;
+	text-align: center;
+}
+
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    border: 1px solid #888;
+    width: 50%; 
+}
+
+.new_project {
+    border-collapse: collapse;
+    width: 220px;
+    height: auto;
+    cursor: pointer;
+}
+
+.waiting_project {
+    position: relative;
+    width: 420px;
+    height: auto;
+}
+
+
+.footer p {
+   margin-top: 5px;
+   font-family: calibri;
+}
+
+.footer {
+   position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: #331f7c;
+   color: white;
+   text-align: center;
+   height: 30px;
+}
+
+.active {
+    background-color: #4CAF50;
+}
+
+.text_end_form a {
+    text-align: center;
+    margin-bottom: 10px;
+    text-decoration: none;
+    display: block;
+}
+
+.picture_home {
+    height: 50%;
+    width: 50%;
+
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
