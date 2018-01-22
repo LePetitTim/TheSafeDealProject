@@ -5,32 +5,59 @@
 {% block content %}
 
 
-	{{ error }}
-	
-	
+<center><strong>{{ error }}</strong></center>
+
 <form method="POST" class="post-form">
 	{% csrf_token %}
-
-	{{ contract.title }}
-	{{ contract.text }}
-	{{ contract.created_date}}
-	
+<center>	
 	{% if form != Null %}
-		<h1>Create a new contract :</h1>	
-		{{ form }}
+		<h1>Create a new contract :</h1>
+		{% for field in form %}		
+			<p><strong>{{ field.label_tag }}</strong></p>
+			<p>{{ field }}</p>
+		{% endfor %}
 		<button type="submit" name="new" class="save btn btn-default">Save</button>
-		
 	{% endif %}
+</center>
+
+{% if contract %}
+<center>
+	<table>
+		<tr>
+
+			<th>{{ contract.title }}</th>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>{{ contract.text }}</td>
+		<th>{{ contract.created_date}}</th>
+		<td>
+			{% if telecharger == True%}
+				<button type="submit" name="download" class="save btn btn-default">Télécharger</button>
+			{% endif %}
+			{% if save == True %}
+				<button type="submit" name="edit" class="save btn btn-default">Edit</button>
+				<button type="submit" name="delete" class="save btn btn-default">Delete</button>
+			{% endif %}
+			{% if save == False %}
+				<button type="submit" name="edit" class="save btn btn-default">Save</button>
+			{% endif %}
+		</td>
+		</tr>
+	</table>
+</center>
+{% endif %}	
+
+
+
+
+
+
 	
-	{% if save == True %}
-		<button type="submit" name="edit" class="save btn btn-default">Edit</button>
-		<button type="submit" name="delete" class="save btn btn-default">Delete</button>
-		<button type="submit" name="download" class="save btn btn-default">Télécharger</button>
-	{% endif %}
 	
-	{% if save == False %}
-		<button type="submit" name="edit" class="save btn btn-default">Save</button>
-	{% endif %}
+	
+	
 	
 </form>
 {% endblock %}

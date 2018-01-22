@@ -38,6 +38,11 @@ def register(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
+            #Remove user.is_active = True + put other part + change SMTP in settings
+            user.is_active = True
+            user.save()
+            return redirect('home')
+            """
             user.is_active = False
             user.save()
             current_site = get_current_site(request)
@@ -54,6 +59,7 @@ def register(request):
             )
             email.send()
             return HttpResponse("Veuillez s'il vous plait confirmer votre email pour completer le processus")
+            """
     else:
         form = SignupForm()
     return render(request, 'register.html', {'form': form})
@@ -125,8 +131,8 @@ def showProject(request, uidb32):
                     original_name = str(request.FILES['document'])
                     new_document.original_name = original_name
                     new_document.extension = new_document.get_extension()
-                    if len(original_name) > 20 :
-                        new_document.original_name = str(original_name).replace(original_name,original_name[0:20]+"."+new_document.extension)
+                    if len(new_document.original_name) > 30 :
+                        new_document.original_name = str(original_name).replace(original_name,original_name[0:30]+"."+new_document.extension)
                     new_document.key = get_random_string(length=32)
                     new_document.save()
                     documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
@@ -251,6 +257,7 @@ def download(request, project_key, document_key):
         return render(request, 'project.html',{'valide':valide})
 
 def contract(request, uidb32):
+	telecharger = False
 	save = False
 	contractExist=False
 	if request.user.is_authenticated():
@@ -288,7 +295,8 @@ def contract(request, uidb32):
 					new_contract.created_date = timezone.now()
 					new_contract.save()
 					save = True
-					return render(request, 'contract.html', {'contract':new_contract, 'save':save})	 
+					telecharger = True
+					return render(request, 'contract.html', {'contract':new_contract, 'save':save, 'telecharger':telecharger})	 
 				form = ContractForm(instance=post)
 				return render(request, 'contract.html', {'contract':form,'save':save})
 			elif request.method == "POST" and "delete" in request.POST:
@@ -314,9 +322,11 @@ def contract(request, uidb32):
 				user = CustomUser.objects.all()					
 				if Projet.objects.filter(key=uidb32).exists():
 					if Contract.objects.filter(projet_key=uidb32).exists():
+						save = True
 						contract =  Contract.objects.get(projet_key=uidb32)
 						contractExist = 'True'
-						return render(request, 'contract.html', {'contract':contract,'save':save,'Exist':contractExist})
+						telecharger = True
+						return render(request, 'contract.html', {'contract':contract,'save':save,'telecharger':telecharger})
 					else:
 						form = ContractForm()
 						contract=""
@@ -341,7 +351,8 @@ def contract(request, uidb32):
 				if Contract.objects.filter(projet_key=uidb32).exists():
 					contract =  Contract.objects.get(projet_key=uidb32)
 					contractExist = 'True'
-					return render(request, 'contract.html', {'contract':contract,'Exist':contractExist})
+					telecharger = True
+					return render(request, 'contract.html', {'contract':contract,'Exist':contractExist,'telecharger':telecharger})
 				else:
 					contract=""
 					error = "Il n'y a pas encore de contrat pour ce projet."
