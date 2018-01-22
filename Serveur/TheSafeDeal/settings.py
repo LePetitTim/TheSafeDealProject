@@ -122,12 +122,12 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'timothee.de_montety@isen-lille.fr'
-EMAIL_HOST_PASSWORD = 'RByKbJLU'
-DEFAULT_FROM_EMAIL = 'timothee.de_montety@isen-lille.fr'
+EMAIL_HOST = 'smtp.live.com'
+EMAIL_HOST_USER = 'tim.montety@live.fr'
+EMAIL_HOST_PASSWORD = 'Tim23061995'
+DEFAULT_FROM_EMAIL = 'tim.montety@live.fr'
 
-EMAIL_PORT = 587
+EMAIL_PORT = 25
 
 LOGIN_REDIRECT_URL = 'connected'
 
