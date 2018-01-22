@@ -353,3 +353,17 @@ def contract(request, uidb32):
 	else:
 		valide = "Veuillez vous connecter pour voir cette page."
 		return render(request, 'project.html',{'valide':valide})
+
+
+def api_token(request):
+	if not request.user.is_authenticated():
+		if request.method == 'POST':
+			if request.POST['username'] and request.POST['password'] :
+				token = get_random_string(length=60)
+				return HttpResponse('{ "token" : '+ token +'}')
+		else :
+			return HttpResponse("NO_POST")
+	
+	return HttpResponse("Veuillez vous déconnecter")
+
+
