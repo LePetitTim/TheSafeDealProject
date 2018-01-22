@@ -16,7 +16,7 @@ from django.core.mail import EmailMessage
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django import forms
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from .models import CustomUser, Projet, Files, Contract
 from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ObjectDoesNotExist
@@ -367,14 +367,6 @@ def contract(request, uidb32):
 
 
 def api_token(request):
-	if not request.user.is_authenticated():
-		if request.method == 'POST':
-			if request.POST['username'] and request.POST['password'] :
-				token = get_random_string(length=60)
-				return HttpResponse('{ "token" : '+ token +'}')
-		else :
-			return HttpResponse("NO_POST")
-	
-	return HttpResponse("Veuillez vous déconnecter")
+	return HttpResponse('{ "token" : '+ get_random_string(60) +'}')
 
 
