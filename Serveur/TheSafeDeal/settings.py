@@ -25,7 +25,7 @@ SECRET_KEY = 'gi99kb*cj!-low)ach4(o!%fv6oq-!616*8b*pt^eb-*j359un'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# Host of the website, we put the name of the host here 'DealWithIt.com' for exemple
+# Host du site web. 'DealWithIt.com' par exemple lors du déploiement.
 ALLOWED_HOSTS = ["127.0.0.1","192.168.1.16"]
 
 
@@ -107,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'fr'
 
-# Timezone of Paris for projects date (need to be changed in the case of a different time_zone or international use.)
+# Timezone de Paris pour la date des projets ainsi que du contrat (doit être changé dans le cas d'un serveur hors France ou site internationnal.)
 
 TIME_ZONE = 'Europe/Paris'
 
@@ -126,7 +126,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# Modify Email host/ Password/ User for smtp server.
+# Modifiez email pour le serveur SMTP. Le serveur active directement le compte pour le moment.
+# Système de validation du profil inactif.
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.live.com'
@@ -134,11 +135,11 @@ EMAIL_HOST_USER = 'tim.montety@live.fr'
 EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'tim.montety@live.fr'
 EMAIL_PORT = 25
-# URL of the redirection after login
+# URL pour la redirection après le login
 LOGIN_REDIRECT_URL = 'connected'
-# Custom model for login/register
+# Custom model pour login/register
 AUTH_USER_MODEL = 'TheSafeDeal_NoAdmin.CustomUser'
 
-#URL/ROOT for Files
+#URL/ROOT pour les fichiers.
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

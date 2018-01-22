@@ -23,17 +23,32 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 import os
 
-# Create your views here.
+
+# Definition des vues Django. Permet de recuperer les informations dans la base de donnée, faire les redirections sur les autres pages.
+# L'affichage de la page actuel ...
 
 def about(request):
-    return render(request, 'about.html',{})
+	"""
+	Affiche la page a propos.
+	"""
+	return render(request, 'about.html',{})
 
 def home(request):
+	"""
+	Affiche la page d'accueil
+	"""
 	file = Files.objects.all()
 	customUser = CustomUser.objects.all()
 	return render(request, 'home.html', {'CustomUser' : customUser, 'CustomFile' : file})
 
 def register(request):
+    """
+    Affiche la page registration.
+    SI le formulaire est valide, le compte est crée mais inactif. L'utilisateur doit se connecter à sa boite mail pour activer son compte.
+    (/!\ Serveur SMTP bloqué, besoin de modifier les parametres dans : TheSafeDeal/settings.py pour envoyer sur un serveur SMTP fonctionnel).
+    Envoie un mail avec comme objet : Active ton compte provenant de l'adresse mail du serveur SMTP. Avec comme description la page acc_active_email.html.
+    La page contient un token unique pour l'activation du compte. L'url pour l'activation utilise ce token.
+    """
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
@@ -65,6 +80,9 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 def activate(request, uidb64, token):
+    """
+    Utilisé pour l'activation du compte. Si le token n'existe pas(url crée de toute pièce). Affichage d'un message d'erreur.
+    """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         User = get_user_model()
@@ -80,6 +98,18 @@ def activate(request, uidb64, token):
         return HttpResponse("Le lien d'activation est invalide!")
         
 def showProject(request, uidb32):
+    """
+    Affiche le projet avec la clé uidb32. La clé est unique.
+    Le projet est affiché sous certaines conditions : 
+    - l'utilisateur doit etre authentifié.
+    - le projet doit exister
+    - L'utilisateur doit faire partie du projet.
+    
+    Cette page affiche en détail les fichiers du projet. Les differents éléments utiles provenant du modèle Projet.
+    Possibilité d'ajouter un prestataire si il n'est pas choisie a la création.
+    Possibilité de télécharger les fichiers du projet.
+    Possibilité d'atteindre le contrat de se projet. (voir contract).
+    """
     valide = ""
     client=""
     professionnel=""
