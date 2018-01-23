@@ -23,6 +23,7 @@ Vous devez normalement avoir un nouveau db.sqlite3 vierge.
 
 Vous pouvez desormais demarrer le serveur en utilisant la commande : 
 >$ python manage.py runserver
+
 /!\ Si vous utilisez Windows et que vous obtenez l'erreur UnicodeDecodeError, tapez plutôt cette commande : 
 >$ python manage.py runserver 0:8000
 
