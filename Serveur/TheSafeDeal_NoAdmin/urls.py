@@ -4,6 +4,12 @@ from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
 
+
+"""
+Patterns pour la redirection des vues. Lorsque vous obtenez l'url https://<domaine>, vous arrivez sur la vue home.
+La vue home va ensuite diriger sur la page home.
+De même pour tous les urls.
+"""
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^about$', views.about, name='about'),
@@ -18,5 +24,8 @@ urlpatterns = [
 	url(r'^api-token/', views.api_token, name='api_token'),
 ]
 
+"""
+Utilisé pour la gestion des fichiers et permet de télécharger les differents fichiers dans la racine des medias.
+"""
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

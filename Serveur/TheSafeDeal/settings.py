@@ -145,3 +145,11 @@ AUTH_USER_MODEL = 'TheSafeDeal_NoAdmin.CustomUser'
 #URL/ROOT pour les fichiers.
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+CORS_ORIGIN_ALLOW_ALL = True  
+
+"""
+Pour mettre en place le serveur sous https, il faut d'abord créer un certificat, activer le https hors django puis enfin décomenter les 3 lignes ci dessous.
+"""
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#CSRF_COOKIE_SECURE = True
+#SESSION_COOKIE_SECURE = True
