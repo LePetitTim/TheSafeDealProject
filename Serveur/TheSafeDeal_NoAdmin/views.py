@@ -432,10 +432,7 @@ def api_token(request):
 	if not request.user.is_authenticated():
 		if request.method == 'POST':
 			
-
-			token_api = get_random_string(length=60)
-			return HttpResponse('{ "token" : '+ '"'+token_api+'"' +'}')
-
+			return HttpResponse("NO_ACCOUNT")
 		else :
 			return HttpResponse("NO_POST")
 	
