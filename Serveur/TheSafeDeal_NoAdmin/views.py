@@ -431,19 +431,11 @@ def contract(request, uidb32):
 def api_token(request):
 	if not request.user.is_authenticated():
 		if request.method == 'POST':
-			if request.POST['username'] and request.POST['password'] :
-				username = request.POST['username']
-				password = request.POST['password']
-				token_api = get_random_string(length=60)
-				authentification = authenticate(username=username, password=password)
-				if authentification is not None :
-					utilisateur = CustomUser.objects.get(username=username)
+			
 
+			token_api = get_random_string(length=60)
+			return HttpResponse('{ "token" : '+ '"'+token_api+'"' +'}')
 
-
-					return HttpResponse('{ "token" : '+ '"'+token_api+'"' +'}')
-				else :
-					return HttpResponse("NO_ACCOUNT")
 		else :
 			return HttpResponse("NO_POST")
 	
