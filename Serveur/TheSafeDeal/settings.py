@@ -40,17 +40,24 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'TheSafeDeal_NoAdmin',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# CORS_ORIGIN_WHITELIST = (
+#     'localhost:8100',
+#     '127.0.0.1'
+# )
 
 ROOT_URLCONF = 'TheSafeDeal.urls'
 
@@ -145,7 +152,6 @@ AUTH_USER_MODEL = 'TheSafeDeal_NoAdmin.CustomUser'
 #URL/ROOT pour les fichiers.
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-CORS_ORIGIN_ALLOW_ALL = True  
 
 """
 Pour mettre en place le serveur sous https, il faut d'abord créer un certificat, activer le https hors django puis enfin décomenter les 3 lignes ci dessous.
@@ -153,3 +159,5 @@ Pour mettre en place le serveur sous https, il faut d'abord créer un certificat
 #SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 #CSRF_COOKIE_SECURE = True
 #SESSION_COOKIE_SECURE = True
+
+CORS_ORIGIN_ALLOW_ALL = True
