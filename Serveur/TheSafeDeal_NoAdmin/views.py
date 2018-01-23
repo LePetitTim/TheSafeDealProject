@@ -22,7 +22,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 import os
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Definition des vues Django. Permet de recuperer les informations dans la base de donnée, faire les redirections sur les autres pages.
@@ -427,21 +427,24 @@ def contract(request, uidb32):
 		return render(request, 'project.html',{'valide':valide})
 
 
+@csrf_exempt
 def api_token(request):
 	if not request.user.is_authenticated():
-		if request.method == 'GET':
-			if request.GET['username'] and request.GET['password'] :
-				username = request.GET['username']
-				password = request.GET['password']
+		if request.method == 'POST':
+			if request.POST['username'] and request.POST['password'] :
+				username = request.POST['username']
+				password = request.POST['password']
 				token_api = get_random_string(length=60)
 				authentification = authenticate(username=username, password=password)
 				if authentification is not None :
+					utilisateur = CustomUser.objects.get(username=username)
+
+
 
 					return HttpResponse('{ "token" : '+ '"'+token_api+'"' +'}')
 				else :
 					return HttpResponse("NO_ACCOUNT")
 		else :
-			return HttpResponse("NO_GET")
+			return HttpResponse("NO_POST")
 	
 	return HttpResponse("Veuillez vous déconnecter")
-
