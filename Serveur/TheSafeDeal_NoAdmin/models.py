@@ -10,6 +10,8 @@ import os
 
 # Create your models here.
 
+# Django va transformer ce fichier python en un fichier sql pour la base de donnée db.sqlite3
+
 TYPE_USER = (
 	('Prestataire', 'Prestataire'),
 	('Professionnel', 'Professionnel'),
@@ -17,6 +19,23 @@ TYPE_USER = (
 )
 
 class CustomUser(AbstractUser):
+    '''
+    Modèle pour les utilisateurs. Il contient toutes les infos d'un utilisateur ainsi que les projets de l'utilisateur cléprojet1;cléprojet2;cléprojet3.
+    
+    Le modèle est fait des tables de base du modèle Django AbstractUser avec :
+    password (le mot de passe est encrypyé dans la base de donnée utilisant sha)
+    last_login
+    is_superuser
+    username
+    first_name (non utilisé)
+    last_name (non utilisé)
+    is_staff
+    is_active
+    date_joined
+    type_user
+    projet
+    email
+    '''
     typeUser = models.CharField(max_length=30, choices=TYPE_USER,null=False, blank=False)
     projet = models.CharField(max_length=32, blank=True)
     email = models.EmailField(verbose_name='email address',max_length=255,unique=True,)
@@ -130,6 +149,21 @@ class CustomUser(AbstractUser):
 
 
 class Projet(models.Model):
+    """
+    Modèle pour les projets. Il contient les informations de 1 projet.
+    
+    Le modèle est fait des tables :
+    titre
+    clé du projet
+    email du prestataire
+    email du client
+    email du professionnel
+    date de debut du projet
+    date de fin du projet
+    description
+    prix
+    3 booleans pour la validations de chaque personnes
+    """
 	titre = models.CharField(max_length=200)
 	key = models.CharField(max_length=32, unique=True)
 	prestataire = models.TextField(max_length=150, blank=True)
@@ -153,6 +187,20 @@ def directory_path(instance,filename):
 	return '{0}/{1}'.format(instance.projet_key,instance.key +'.'+typeFileName)
 
 class Files(models.Model):
+    """
+    Modèle pour les fichiers. Il contient les informations de 1 Fichier.
+    Chaque fichier se situe dans son dossier correspondant au projet.
+
+    Le modèle est fait des tables :
+    type du fichier
+    clé du projet (l'endroit ou il se situera dans le dossier des fichiers : /media)
+    url du fichier
+    date d'upload
+    nom de celui qui a upload le fichier
+    nom original (sur le pc de l'utilisateur)
+    clé du fichier
+    extension du fichier (.txt ,.pdf ...)
+    """
 	typeName = models.CharField(max_length=30,null=True, blank=False)
 	projet_key= models.CharField(max_length=32, blank = True)
 	document = models.FileField(upload_to=directory_path)
@@ -186,6 +234,15 @@ class Files(models.Model):
 
 
 class Contract(models.Model):
+    """
+    Modèle pour les contrats. Il contient les informations de chaque contrats.
+    
+    Le modèle est fait des tables :
+    clé du projet.
+    titre du contrat
+    description du contrat
+    date de creation du contrat.
+    """
     projet_key = models.CharField(max_length=32, blank = True, unique= True)
     title = models.CharField(max_length=200)
     text = models.TextField()
