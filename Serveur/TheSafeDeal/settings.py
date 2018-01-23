@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'TheSafeDeal_NoAdmin',
-    'rest_framework',
 ]
 
 MIDDLEWARE = [

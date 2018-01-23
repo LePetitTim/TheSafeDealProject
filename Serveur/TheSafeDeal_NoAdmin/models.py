@@ -149,7 +149,7 @@ class CustomUser(AbstractUser):
 
 
 class Projet(models.Model):
-    """
+	"""
     Modèle pour les projets. Il contient les informations de 1 projet.
     
     Le modèle est fait des tables :
@@ -187,7 +187,7 @@ def directory_path(instance,filename):
 	return '{0}/{1}'.format(instance.projet_key,instance.key +'.'+typeFileName)
 
 class Files(models.Model):
-    """
+	"""
     Modèle pour les fichiers. Il contient les informations de 1 Fichier.
     Chaque fichier se situe dans son dossier correspondant au projet.
 
