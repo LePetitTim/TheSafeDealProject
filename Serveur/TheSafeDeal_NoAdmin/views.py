@@ -305,7 +305,7 @@ def download(request, project_key, document_key):
         return render(request, 'project.html',{'valide':valide})
 
 def contract(request, uidb32):
-    """
+	"""
     Permet d'afficher le contrat d'un projet, permet de le modifier en tant que professionnelle et l'afficher en tant que Client.
 
     Il est egalement possible de le modifier pour le Professionnelle et le telecharger pour le client et le professionnelle.
@@ -428,20 +428,19 @@ def contract(request, uidb32):
 
 def api_token(request):
 	if not request.user.is_authenticated():
-		if request.method == 'POST':
-			if request.POST['username'] and request.POST['password'] :
-				username = request.POST['username']
-				password = request.POST['password']
+		if request.method == 'GET':
+			if request.GET['username'] and request.GET['password'] :
+				username = request.GET['username']
+				password = request.GET['password']
 				token_api = get_random_string(length=60)
 				authentification = authenticate(username=username, password=password)
 				if authentification is not None :
 
-					return HttpResponse('{ "token" : '+ token +'}')
+					return HttpResponse('{ "token" : '+ '"'+token_api+'"' +'}')
 				else :
 					return HttpResponse("NO_ACCOUNT")
 		else :
-			return HttpResponse("NO_POST")
+			return HttpResponse("NO_GET")
 	
 	return HttpResponse("Veuillez vous déconnecter")
-
 

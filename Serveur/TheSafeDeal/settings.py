@@ -25,8 +25,9 @@ SECRET_KEY = 'gi99kb*cj!-low)ach4(o!%fv6oq-!616*8b*pt^eb-*j359un'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# Host du site web. 'DealWithIt.com' par exemple lors du déploiement.
-ALLOWED_HOSTS = ["127.0.0.1","192.168.1.16"]
+
+# Host of the website, we put the name of the host here 'DealWithIt.com' for exemple
+ALLOWED_HOSTS = ["127.0.0.1","192.168.1.16","192.168.1.41"]
 
 
 # Application definition (name of the application is TheSafeDeal_NoAdmin)
@@ -40,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'TheSafeDeal_NoAdmin',
     'rest_framework',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -51,7 +51,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'TheSafeDeal.urls'
@@ -154,7 +153,6 @@ AUTH_USER_MODEL = 'TheSafeDeal_NoAdmin.CustomUser'
 #URL/ROOT pour les fichiers.
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 CORS_ORIGIN_ALLOW_ALL = True  
 
 """
