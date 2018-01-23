@@ -22,6 +22,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 import os
+from django.views.decorators.csrf import csrf_protect
 
 
 # Definition des vues Django. Permet de recuperer les informations dans la base de donnée, faire les redirections sur les autres pages.
