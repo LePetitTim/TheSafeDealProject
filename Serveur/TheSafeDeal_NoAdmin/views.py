@@ -23,6 +23,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 import os
 from django.views.decorators.csrf import csrf_exempt
+import json
+from .functions import stringify_projects_list
 
 
 # Definition des vues Django. Permet de recuperer les informations dans la base de donnée, faire les redirections sur les autres pages.
@@ -431,9 +433,38 @@ def contract(request, uidb32):
 def api_token(request):
 	if not request.user.is_authenticated():
 		if request.method == 'POST':
-			
-			return HttpResponse("NO_ACCOUNT")
+			body = request.body
+			body_decoded = body.decode('utf8')
+			data_json = json.loads(body_decoded)
+			username = data_json['username']
+			password = data_json['password']
+			token = get_random_string(length=60)
+			authentification = authenticate(username=username, password=password)
+			if authentification is not None :
+				utilisateur = CustomUser.objects.get(username=username)
+				utilisateur.api_token = token
+				utilisateur.save()
+				login(request, utilisateur)
+				session = request.session
+				response = HttpResponse(content='{ "token" : '+ '"'+token+'"' +'}')
+				response.set_cookie(key='sessionid', value=session)
+				return response
+			else :
+				return HttpResponse("NO_ACCOUNT")
 		else :
 			return HttpResponse("NO_POST")
 	
 	return HttpResponse("Veuillez vous déconnecter")
+
+
+def api_projects(request, token):
+	users = CustomUser.objects.all()
+	for user in users :
+		if user.api_token == token :
+			utilisateur = CustomUser.objects.get(api_token = token)
+			projects = utilisateur.get_validated_projects_list()[0]
+			return HttpResponse(stringify_projects_list(projects))
+		else:
+			return HttpResponse('Aucun compte trouvé pour ce token')
+
+

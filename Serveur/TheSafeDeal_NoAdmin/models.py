@@ -39,6 +39,7 @@ class CustomUser(AbstractUser):
     typeUser = models.CharField(max_length=30, choices=TYPE_USER,null=False, blank=False)
     projet = models.CharField(max_length=32, blank=True)
     email = models.EmailField(verbose_name='email address',max_length=255,unique=True,)
+    api_token = models.CharField(max_length=100, blank=True)
     
     def add_project(self, clé_projet):
     	if self.projet.find(clé_projet+";") == -1 :
@@ -50,14 +51,28 @@ class CustomUser(AbstractUser):
     		self.projet = self.projet.replace(clé_projet+";","")
     		self.save()
 
-    # RETURN 1 LISTE CONTENANT DES STRINGS CORRESPONDANT AUX KEY DES PROJETS VISIBLES PAR LE USER
+
+    # RETURN 1 LISTE CONTENANT DES OBJETS PROJET CORRESPONDANT PROJETS VISIBLES PAR LE USER
     def get_projects_list(self):
     	if self.projet == "" :
     		return []
     	else:
-    		result = self.projet.split(';')
-    		result.remove("")
+    		projets = Projet.objects.all()
+    		result = []
+    		if self.typeUser == 'Professionnel' :
+    			for projet in projets :
+    				if projet.professionnel == self.email:
+    					result.append(projet)
+    		elif self.typeUser == 'Client' :
+    			for projet in projets :
+    				if projet.client == self.email:
+    					result.append(projet)
+    		elif self.typeUser == 'Prestataire' :
+    			for projet in projets :
+    				if projet.prestataire == self.email:
+    					result.append(projet)
     		return result
+
 
     # RETURN 2 LISTES CONTENANT DES OBJECTS PROJET : [0] VALIDATED PROJECTS BY THE USER
     #												 [1] NOT VALIDATED PROJECTS BY THE USER
@@ -68,22 +83,22 @@ class CustomUser(AbstractUser):
     	unvalidated_projects = []
     	if len(projects_list) == 0:
     		return [],[]
-    	for key_project in projects_list:
+    	for projet in projects_list:
     		if user_type == 'Prestataire':
-    			if Projet.objects.get(key=key_project).isValidate_Prestataire :
-    				validated_projects.append(Projet.objects.get(key=key_project))
-    			elif not Projet.objects.get(key=key_project).isValidate_Prestataire :
-    				unvalidated_projects.append(Projet.objects.get(key=key_project))
+    			if Projet.objects.get(key=projet.key).isValidate_Prestataire :
+    				validated_projects.append(Projet.objects.get(key=projet.key))
+    			elif not Projet.objects.get(key=projet.key).isValidate_Prestataire :
+    				unvalidated_projects.append(Projet.objects.get(key=projet.key))
     		elif user_type == 'Professionnel':
-    			if Projet.objects.get(key=key_project).isValidate_Professionnel :
-    				validated_projects.append(Projet.objects.get(key=key_project))
-    			elif not Projet.objects.get(key=key_project).isValidate_Professionnel :
-    				unvalidated_projects.append(Projet.objects.get(key=key_project))
+    			if Projet.objects.get(key=projet.key).isValidate_Professionnel :
+    				validated_projects.append(Projet.objects.get(key=projet.key))
+    			elif not Projet.objects.get(key=projet.key).isValidate_Professionnel :
+    				unvalidated_projects.append(Projet.objects.get(key=projet.key))
     		elif user_type == 'Client':
-    			if Projet.objects.get(key=key_project).isValidate_Client :
-    				validated_projects.append(Projet.objects.get(key=key_project))
-    			elif not Projet.objects.get(key=key_project).isValidate_Client :
-    				unvalidated_projects.append(Projet.objects.get(key=key_project))
+    			if Projet.objects.get(key=projet.key).isValidate_Client :
+    				validated_projects.append(Projet.objects.get(key=projet.key))
+    			elif not Projet.objects.get(key=projet.key).isValidate_Client :
+    				unvalidated_projects.append(Projet.objects.get(key=projet.key))
     	return validated_projects,unvalidated_projects
 
 
