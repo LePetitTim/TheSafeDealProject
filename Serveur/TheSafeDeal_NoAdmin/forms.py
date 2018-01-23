@@ -5,7 +5,7 @@ from .models import Projet
 from .models import CustomUser
 from .models import Files
 from .models import Contract
-
+from .models import Event
 
 # Differents choix de fichier. Chaque type de user peut choisir uniquement ses types de fichier.
 
@@ -53,5 +53,9 @@ class ContractForm(forms.ModelForm):
 		model = Contract 
 		fields = ('title', 'text',)
 
+class EventForm(forms.ModelForm):
+	class Meta:
+		model = Event
+		fields = ('date_debut','date_fin','type_event')
     
 

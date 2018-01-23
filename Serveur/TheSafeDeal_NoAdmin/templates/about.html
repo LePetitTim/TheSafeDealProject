@@ -7,5 +7,9 @@
 	<p>Nous sommes trois étudiants en informatique de l'ISEN Lille. Nous réalisons ce projet de site web afin de permettre et faciliser la réalisation de projets et les relations clients, professionnel, prestataire.</p>
 	<div class="titre"><strong>Pourquoi ce site?</strong></div>
 </div>
-
+<form method='post'>
+{% csrf_token %}
+{{ form }}
+<button>Importer</button>
+</form>
 {% endblock %}

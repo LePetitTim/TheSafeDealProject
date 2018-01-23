@@ -17,6 +17,12 @@ TYPE_USER = (
 	('Professionnel', 'Professionnel'),
 	('Client', 'Client')
 )
+TYPE_EVENT = (
+    ('Disponible', 'Disponible'),
+    ('En Travaux', 'En Travaux'),
+    ('Loué', 'Loué'),
+    ('En cours de reservation', 'En cours de reservation'),
+)
 
 class CustomUser(AbstractUser):
     '''
@@ -267,4 +273,34 @@ class Contract(models.Model):
         return self.title
 	
 
-	
+
+class Event(models.Model):
+    projet_key = models.CharField(max_length=32, blank = True, unique= False)
+    date_debut = models.DateTimeField(auto_now = False, blank = False)
+    date_fin = models.DateTimeField(auto_now = False, blank = False)
+    type_event = models.CharField(max_length=30, choices=TYPE_EVENT, null=False, blank=False)
+
+# Verifie si la date ne fait pas partie d'un autre evenement.
+    def check_date_event(self):
+        debut = self.date_debut.now()
+        fin = self.date_fin.now()
+        datesProject = Event.objects.get(projet_key=self.projet_key)
+        for i in datesProject:
+            date_debut_Projecti = i.date_debut
+            date_fin_Projecti = i.date_fin
+            if date_debut_Projecti<fin and date_debut_Projecti>debut:
+                return False
+            if date_fin_Projecti.total_seconds<fin and date_fin_Projecti>debut:
+                return False
+        return True
+
+
+# Verifie si le type d'evenement n'ai pas innapropprié à la date (ex : construction hors des dates du projet.) ???
+    def check_type_event(self,date_debut,date_fin,typeEvent,project_key):
+        debutProjet = Project.objects.get(key=project_key).date_debut.total_seconds()
+        finProjet = Project.objects.get(key=project_key).date_fin.total_seconds()
+        return True
+
+
+    def __unicode__(self):
+        return u'%s' % self.projet_key

@@ -6,6 +6,7 @@ from .forms import SignupForm
 from .forms import NewProjectForm
 from .forms import FileForm
 from .forms import ContractForm
+from .forms import EventForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -31,10 +32,22 @@ from .functions import stringify_projects_list
 # L'affichage de la page actuel ...
 
 def about(request):
-	"""
-	Affiche la page a propos.
-	"""
-	return render(request, 'about.html',{})
+    """
+    Affiche la page a propos.
+    """
+    if request.method == "POST":
+        form = EventForm(request.POST)
+        if form.is_valid():
+            event = form.save(commit=False)
+            if event.check_date_event():
+                event.projet_key='a'
+                event.save()
+                render(request, 'home.html',{})
+            else:
+                redirect('home')
+    else:
+        form = EventForm()
+    return render(request, 'about.html',{'form': form})
 
 def home(request):
 	"""
