@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 import os
-
+from django.core.exceptions import ObjectDoesNotExist
+from datetime import datetime
 
 
 
@@ -30,22 +31,22 @@ class Event(models.Model):
     type_event = models.CharField(max_length=30, choices=TYPE_EVENT, null=False, blank=False)
 
 # Verifie si la date ne fait pas partie d'un autre evenement.
-    def check_date_event(self):
-        debut = self.date_debut.now()
-        fin = self.date_fin.now()
-        datesProject = Event.objects.get(projet_key=self.projet_key)
+    def check_date_event(self,projet_key,debut,fin):
+        debut = debut.timestamp()
+        fin = fin.timestamp()
+        datesProject = Event.objects.all().filter(projet_key=projet_key)
         for i in datesProject:
-            date_debut_Projecti = i.date_debut
-            date_fin_Projecti = i.date_fin
-            if date_debut_Projecti<fin and date_debut_Projecti>debut:
+            date_debut_Projecti = i.date_debut.timestamp()
+            date_fin_Projecti = i.date_fin.timestamp()
+            if date_debut_Projecti < fin and date_debut_Projecti > debut:
                 return False
-            if date_fin_Projecti.total_seconds<fin and date_fin_Projecti>debut:
+            if date_fin_Projecti < fin and date_fin_Projecti > debut:
                 return False
         return True
 
 
-# Verifie si le type d'evenement n'ai pas innapropprié à la date (ex : construction hors des dates du projet.) ???
-    def check_type_event(self,date_debut,date_fin,typeEvent,project_key):
+# Verifie si le type d'evenement n'ai pas innapropprié à la date (ex : construction hors des dates du projet.) 
+    def check_type_event(self,project_key,date_debut,date_fin,typeEvent):
         debutProjet = Project.objects.get(key=project_key).date_debut.total_seconds()
         finProjet = Project.objects.get(key=project_key).date_fin.total_seconds()
         return True

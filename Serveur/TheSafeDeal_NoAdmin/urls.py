@@ -23,6 +23,7 @@ urlpatterns = [
 	url(r'^project/(?P<uidb32>[0-9A-Za-z_\-]+)$', views.showProject, name='project'),
 	url(r'^api-token$', views.api_token, name='api_token'),
 	url(r'^api-token/(?P<token>[0-9A-Za-z_\-]{60})/projects$', views.api_projects, name='api_projects'),
+    url(r'^project/(?P<uidb32>[0-9A-Za-z_\-]+)/event$', views.event, name='event'),
 ]
 
 """

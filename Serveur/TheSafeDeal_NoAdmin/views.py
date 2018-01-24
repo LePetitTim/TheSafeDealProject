@@ -31,23 +31,7 @@ from .functions import stringify_projects_list
 # Definition des vues Django. Permet de recuperer les informations dans la base de donnée, faire les redirections sur les autres pages.
 # L'affichage de la page actuel ...
 
-def about(request):
-    """
-    Affiche la page a propos.
-    """
-    if request.method == "POST":
-        form = EventForm(request.POST)
-        if form.is_valid():
-            event = form.save(commit=False)
-            if event.check_date_event():
-                event.projet_key='a'
-                event.save()
-                render(request, 'home.html',{})
-            else:
-                redirect('home')
-    else:
-        form = EventForm()
-    return render(request, 'about.html',{'form': form})
+
 
 def home(request):
 	"""
@@ -480,4 +464,28 @@ def api_projects(request, token):
 		else:
 			return HttpResponse('Aucun compte trouvé pour ce token')
 
+def about(request):
+    """
+    Affiche la page a propos.
+    """
+    return render(request, 'about.html',{})
 
+def event(request,uidb32):
+    if request.method == "POST":
+        form = EventForm(request.POST)
+        if form.is_valid():
+            event = form.save(commit=False)
+            if event.check_date_event(uidb32,event.date_debut,event.date_fin):
+                event.projet_key=uidb32
+                event.save()
+                form= EventForm()
+                information = "L'evenement a bien été rajouté"
+                render(request, 'about.html',{'form': form,'information':information})
+            else:
+                form = EventForm()
+                information = "Les dates sont deja prises"
+                render(request, 'about.html',{'form': form,'information': information})
+    else:
+        form = EventForm()
+        information = ""
+    return render(request, 'event.html',{'form': form,'information': information})
