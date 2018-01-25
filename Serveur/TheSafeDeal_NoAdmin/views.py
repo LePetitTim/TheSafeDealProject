@@ -25,7 +25,7 @@ from django.conf import settings
 import os
 from django.views.decorators.csrf import csrf_exempt
 import json
-from .functions import stringify_projects_list
+from .functions import *
 
 
 # Definition des vues Django. Permet de recuperer les informations dans la base de donnée, faire les redirections sur les autres pages.
@@ -180,7 +180,7 @@ def showProject(request, uidb32):
                         os.remove(settings.MEDIA_ROOT+"/"+str(delete_file.document))
                         documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
                         return redirect("/project/"+project.key)
-        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : sorted(documents_list_of_user_of_project, key=lambda files: files.upload_date, reverse=True)})
+        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : sorted(documents_list_of_user_of_project, key=lambda files: files.upload_date, reverse=True), 'state' : get_actual_state(project.key)})
     else:
         valide = "Veuillez vous connecter pour voir cette page."
         return render(request, 'project.html',{'valide':valide})
@@ -477,14 +477,13 @@ def event(request,uidb32):
             event = form.save(commit=False)
             if event.check_date_event(uidb32,event.date_debut,event.date_fin):
                 event.projet_key=uidb32
-                event.type_event="En Travaux"
                 event.save()
                 form= EventForm()
                 information = "L'evenement a bien été rajouté"
                 render(request, 'about.html',{'form': form,'information':information})
             else:
                 form = EventForm()
-                information = "Les dates sont deja prises"
+                information = "Les dates sont dejà prises"
                 render(request, 'about.html',{'form': form,'information': information})
     else:
         form = EventForm()

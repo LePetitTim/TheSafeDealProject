@@ -37,19 +37,17 @@ class Event(models.Model):
         if debut<fin:
             datesProject = Event.objects.all().filter(projet_key=projet_key)
             for i in datesProject:
-                if i.type_event != "Disponible":
-                    date_debut_Projecti = i.date_debut.timestamp()
-                    date_fin_Projecti = i.date_fin.timestamp()
-                    if date_debut_Projecti < fin and date_debut_Projecti > debut:
-                        return False
-                    if date_fin_Projecti < fin and date_fin_Projecti > debut:
-                        return False
-                    if date_fin_Projecti <fin and date_debut_Projecti >debut:
-                        return False
+                date_debut_Projecti = i.date_debut.timestamp()
+                date_fin_Projecti = i.date_fin.timestamp()
+                if date_debut_Projecti < fin and date_debut_Projecti > debut:
+                    return False
+                if date_fin_Projecti < fin and date_fin_Projecti > debut:
+                    return False
+                if date_fin_Projecti <fin and date_debut_Projecti >debut:
+                    return False
             return True
         else:
             return False
-        
 
 
 # Verifie si le type d'evenement n'ai pas innapropprié à la date (ex : construction hors des dates du projet.) 
@@ -240,6 +238,17 @@ class Projet(models.Model):
 
 	def __str__(self):
 		return self.titre
+
+	# FONCTION QUI RETOURNE UNE LISTE D'EVENTS APPARTENANT AU PROJET
+	def get_events(self):
+		events = Event.objects.all()
+		project_events = []
+		for event in events :
+			if event.projet_key == self.key :
+				project_events.append(event)
+		return project_events
+
+
 
 def directory_path(instance,filename):
 	typeFileName = filename.split(".")[-1]
