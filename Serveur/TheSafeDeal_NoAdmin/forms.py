@@ -59,8 +59,8 @@ class EventForm(forms.ModelForm):
 		model = Event
 		fields = ('date_debut','date_fin','type_event')
 		widgets = {
-            'date_debut': forms.DateInput(attrs={'type': 'date'}),
-            'date_fin': forms.DateInput(attrs={'type': 'date'})
+            'date_debut': forms.DateInput(attrs={'type': 'date','min':"2018-01-01",'max':"2100-01-01" }),
+            'date_fin': forms.DateInput(attrs={'type': 'date','min':"2018-01-01",'max':"2100-01-01"})
         }
     
 
