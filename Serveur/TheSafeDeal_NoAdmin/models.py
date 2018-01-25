@@ -34,15 +34,19 @@ class Event(models.Model):
     def check_date_event(self,projet_key,debut,fin):
         debut = debut.timestamp()
         fin = fin.timestamp()
-        datesProject = Event.objects.all().filter(projet_key=projet_key)
-        for i in datesProject:
-            date_debut_Projecti = i.date_debut.timestamp()
-            date_fin_Projecti = i.date_fin.timestamp()
-            if date_debut_Projecti < fin and date_debut_Projecti > debut:
-                return False
-            if date_fin_Projecti < fin and date_fin_Projecti > debut:
-                return False
-        return True
+        if debut<fin:
+            datesProject = Event.objects.all().filter(projet_key=projet_key)
+            for i in datesProject:
+                date_debut_Projecti = i.date_debut.timestamp()
+                date_fin_Projecti = i.date_fin.timestamp()
+                if date_debut_Projecti < fin and date_debut_Projecti > debut:
+                    return False
+                if date_fin_Projecti < fin and date_fin_Projecti > debut:
+                    return False
+            return True
+        else:
+            return False
+        
 
 
 # Verifie si le type d'evenement n'ai pas innapropprié à la date (ex : construction hors des dates du projet.) 
