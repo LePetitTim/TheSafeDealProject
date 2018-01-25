@@ -477,6 +477,7 @@ def event(request,uidb32):
             event = form.save(commit=False)
             if event.check_date_event(uidb32,event.date_debut,event.date_fin):
                 event.projet_key=uidb32
+                event.type_event="En Travaux"
                 event.save()
                 form= EventForm()
                 information = "L'evenement a bien été rajouté"
