@@ -25,6 +25,7 @@ class FileForm(forms.ModelForm):
 		model = Files
 		fields = ('typeName','document', )
 
+
 # Formulaire pour la registration. Utilisant le modele CustomUser (voir models.CustomUser). 
 # Le formulaire a les meme champs que UserCreationForm provenant de Django.
 class SignupForm(UserCreationForm):
@@ -57,5 +58,9 @@ class EventForm(forms.ModelForm):
 	class Meta:
 		model = Event
 		fields = ('date_debut','date_fin','type_event')
+		widgets = {
+            'date_debut': forms.DateInput(attrs={'type': 'date'}),
+            'date_fin': forms.DateInput(attrs={'type': 'date'})
+        }
     
 
