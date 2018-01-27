@@ -37,14 +37,15 @@ class Event(models.Model):
         if debut<fin:
             datesProject = Event.objects.all().filter(projet_key=projet_key)
             for i in datesProject:
-                date_debut_Projecti = i.date_debut.timestamp()
-                date_fin_Projecti = i.date_fin.timestamp()
-                if date_debut_Projecti < fin and date_debut_Projecti > debut:
-                    return False
-                if date_fin_Projecti < fin and date_fin_Projecti > debut:
-                    return False
-                if date_fin_Projecti <fin and date_debut_Projecti >debut:
-                    return False
+                if i.type_event!="Disponible":
+                    date_debut_Projecti = i.date_debut.timestamp()
+                    date_fin_Projecti = i.date_fin.timestamp()
+                    if date_debut_Projecti < fin and date_debut_Projecti > debut:
+                        return False
+                    if date_fin_Projecti < fin and date_fin_Projecti > debut:
+                        return False
+                    if date_fin_Projecti <fin and date_debut_Projecti >debut:
+                        return False
             return True
         else:
             return False

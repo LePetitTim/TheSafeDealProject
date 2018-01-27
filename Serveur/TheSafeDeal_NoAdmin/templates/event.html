@@ -2,11 +2,18 @@
 {% load staticfiles %}
 {% block content %}
 
+
+
 <form method='post'>
 <p>{{ information }}</p>
 	{% csrf_token %}
 	{{ form }}
 	<button>Importer</button>
 </form>
-
+{% for date in dates %}
+	<p>
+	{{ date.date_debut }} |
+	{{ date.date_fin }}
+	</p>
+{% endfor %}
 {% endblock %}
