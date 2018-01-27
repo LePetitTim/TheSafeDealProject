@@ -248,6 +248,40 @@ class Projet(models.Model):
 				project_events.append(event)
 		return project_events
 
+	# FONCTION QUI RETOURNE UNE LISTE CONTENANT LE NOM ET L'EMAIL DU CLIENT DU PROJET
+	def get_client(self):
+		try:
+			user = CustomUser.objects.get(email = self.client)
+			return user.username, user.email
+		except Exception as e:
+			return None
+
+	# FONCTION QUI RETOURNE UNE LISTE CONTENANT LE NOM ET L'EMAIL DU PRESTATAIRE DU PROJET
+	def get_prestataire(self):
+		try:
+			user = CustomUser.objects.get(email = self.client)
+			return user.username, user.email
+		except Exception as e:
+			return None
+
+	# FONCTION QUI RETOURNE UNE LISTE CONTENANT LE NOM ET L'EMAIL DU PROFESSIONNEL DU PROJET
+	def get_professionnel(self):
+		try:
+			user = CustomUser.objects.get(email = self.client)
+			return user.username, user.email
+		except Exception as e:
+			return None
+
+	# Fonction qui return une liste de strings contenant tous les emails participant au projet (client, pro etc)
+	def get_emails(self):
+		result = []
+		if self.client != '' and self.client is not None :
+			result.append(self.client)
+		if self.prestataire != '' and self.prestataire is not None :
+			result.append(self.prestataire)
+		if self.professionnel != '' and self.professionnel is not None :
+			result.append(self.professionnel)
+		return result
 
 
 def directory_path(instance,filename):

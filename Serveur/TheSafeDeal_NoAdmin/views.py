@@ -161,8 +161,6 @@ def showProject(request, uidb32):
                     original_name = str(request.FILES['document'])
                     new_document.original_name = original_name
                     new_document.extension = new_document.get_extension()
-                    if len(new_document.original_name) > 30 :
-                        new_document.original_name = str(original_name).replace(original_name,original_name[0:30]+"."+new_document.extension)
                     new_document.key = get_random_string(length=32)
                     new_document.save()
                     documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
@@ -201,6 +199,8 @@ def connected(request):
         utilisateur = CustomUser.objects.get(username=request.user)
         validated_projects = utilisateur.get_validated_projects_list()[0]
         unvalidated_projects = utilisateur.get_validated_projects_list()[1]
+        concerned_emails = set(get_all_emails(validated_projects)+get_all_emails(unvalidated_projects))
+        concerned_emails = get_usernames_from_emails(concerned_emails)
 
         if request.method == "POST":
             form = NewProjectForm(request.POST)
@@ -213,7 +213,7 @@ def connected(request):
 
                 if utilisateur.email != cleaned_info['client'] and utilisateur.email != cleaned_info['professionnel'] and utilisateur.email != cleaned_info['prestataire'] :
                     error = "Vous ne pouvez pas créer un projet sans en faire partie! Voyons..."
-                    return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects}) 
+                    return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects, 'concerned_emails' : concerned_emails}) 
 
                 if CustomUser.objects.filter(email = cleaned_info['client']).exists() and CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
                     if cleaned_info['prestataire'] == '':
@@ -227,7 +227,7 @@ def connected(request):
                             return redirect(connected)
                         else:
                             error = "Oups! L'adresse email entrée du Professionnel ou Client ne correpond pas à la bonne personne!"
-                            return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
+                            return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects, 'concerned_emails' : concerned_emails})
                     else:
                         if CustomUser.objects.filter(email = cleaned_info['prestataire']).exists():
                             pre = CustomUser.objects.get(email = cleaned_info['prestataire'])
@@ -242,16 +242,16 @@ def connected(request):
                                 return redirect(connected)
                             else:
                                 error = "Oups! L'adresse email entrée du Professionnel ou Prestataire ou Client ne correpond pas à la bonne entité !"
-                                return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
+                                return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects, 'concerned_emails' : concerned_emails})
                         else:
                             error = "Le Prestataire n'est pas enregistré à cette adresse mail, veuillez réessayer."
-                            return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
+                            return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects, 'concerned_emails' : concerned_emails})
                 else:
                     if not CustomUser.objects.filter(email = cleaned_info['client']).exists():
                         error = "Le Client n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
                     elif not CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
                         error = "Le Professionnel n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
-                    return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
+                    return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects, 'concerned_emails' : concerned_emails})
         
         elif request.method == 'GET' and 'key' in request.GET and 'validate' in request.GET :
             key = request.GET['key']
@@ -263,7 +263,7 @@ def connected(request):
             return redirect(connected)
         else:
             form = NewProjectForm()
-        return render(request, 'connected.html',{'form':form, 'user':request.user, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
+        return render(request, 'connected.html',{'form':form, 'user':request.user, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects, 'concerned_emails' : concerned_emails})
     else:
         form = NewProjectForm()
 
