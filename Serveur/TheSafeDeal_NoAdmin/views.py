@@ -448,7 +448,6 @@ def api_token(request):
 				return HttpResponse("NO_ACCOUNT")
 		else :
 			return HttpResponse("NO_POST")
-	
 	return HttpResponse("Veuillez vous déconnecter")
 
 
@@ -478,6 +477,7 @@ def api_upload(request, token, project_key):
 		new_document.key = get_random_string(length=32)
 		new_document.save()
 		return HttpResponse('Uploadé')
+	return HttpResponse('Aucun fichier dans la requête')
 
 
 def about(request):
