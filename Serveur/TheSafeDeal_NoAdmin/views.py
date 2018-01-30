@@ -462,6 +462,7 @@ def api_projects(request, token):
 			return HttpResponse('Aucun compte trouvé pour ce token')
 
 
+@csrf_exempt
 def api_upload(request, token, project_key):
 	if request.FILES :
 		new_document = File.objects.create()
