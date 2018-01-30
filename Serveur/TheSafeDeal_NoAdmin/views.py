@@ -462,6 +462,24 @@ def api_projects(request, token):
 		else:
 			return HttpResponse('Aucun compte trouvé pour ce token')
 
+
+def api_upload(request, token, project_key):
+	if request.FILES :
+		new_document = File.objects.create()
+		new_document.projet_key = project_key
+		new_document.typeName = "photos"
+		try:
+			new_document.uploaded_by = CustomUser.objects.get(api_token=request.user).username
+		except Exception as e:
+			return HttpResponse("Le token a expiré, veuillez recommencer")
+		original_name = str(request.FILES['fileUrl'])
+		new_document.original_name = original_name
+		new_document.extension = new_document.get_extension()
+		new_document.key = get_random_string(length=32)
+		new_document.save()
+		return HttpResponse('Uploadé')
+
+
 def about(request):
     """
     Affiche la page a propos.
