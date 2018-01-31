@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from .forms import SignupForm
 from .forms import NewProjectForm
 from .forms import FileForm
@@ -443,6 +443,7 @@ def api_token(request):
 				session = request.session
 				response = HttpResponse(content='{ "token" : '+ '"'+token+'"' +'}')
 				response.set_cookie(key='sessionid', value=session)
+				logout(request)
 				return response
 			else :
 				return HttpResponse("NO_ACCOUNT")
