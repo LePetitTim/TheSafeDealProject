@@ -24,6 +24,7 @@ urlpatterns = [
 	url(r'^api-token$', views.api_token, name='api_token'),
 	url(r'^api-token/(?P<token>[0-9A-Za-z_\-]{60})/projects$', views.api_projects, name='api_projects'),
     url(r'^project/(?P<uidb32>[0-9A-Za-z_\-]+)/event$', views.event, name='event'),
+    url(r'^api-token/(?P<token>[0-9A-Za-z_\-]{60})/(?P<project_key>[0-9A-Za-z_\-]{32})/upload$', views.api_upload, name='api_upload'),
 ]
 
 """

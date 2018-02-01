@@ -35,3 +35,34 @@ def get_date_state(project_key, date):
 		if event.date_debut <= date <= event.date_fin :
 			return event.type_event
 	return None
+
+
+# Fonction qui retourne un dictionnaire contenant les noms des utilisateurs correspondant aux emails entrés
+def get_usernames_from_emails(email_list):
+	result = {}
+	for email in email_list :
+		try:
+			user = CustomUser.objects.get(email = email)
+			result[email] = user.username
+		except Exception as e:
+			pass
+	return result
+
+
+# Fonction qui return une liste de strings contenant tous les emails participant à tous les projets dans la liste entrée
+def get_all_emails(projects_list):
+	result = []
+	for projet in projects_list :
+		emails = projet.get_emails()
+		for email in emails :
+			if not email in result :
+				result.append(email)
+	return result
+
+
+# Fonction qui retourne le username du user en fonction de l'email entré (str)
+def get_name_from_email(email):
+	if CustomUser.objects.filter(email = email).exists() :
+		return CustomUser.objects.get(email = email).username
+	else :
+		return ''

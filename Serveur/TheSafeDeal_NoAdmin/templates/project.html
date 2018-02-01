@@ -95,7 +95,7 @@
 		</tr>
 		<tr>
 		 <th>Description</th>
-		 <td>{{ projet.description }}</td>
+		 <td title='{{ projet.description }}'>{{ projet.description|truncatechars:20 }}</td>
 		</tr>
 		<th>Etat</th>
 		 <td><strong>{{ state }}</strong></td>
@@ -114,9 +114,9 @@
 	    {% for file in files %}
 		<tr>
 			{% if file.extension == 'pdf' or file.extension == 'PDF' or file.extension == 'jpg' or file.extension == 'jpeg' or file.extension == 'png' or file.extension == 'bmp' or file.extension == 'JPEG' or file.extension == 'PNG' or file.extension == 'JPG' or file.extension == 'BMP' %}
-				<td style="cursor: pointer;" onclick="display_form('{{ file.key }}')">{{ file.original_name }}</td>
+				<td style="cursor: pointer;" onclick="display_form('{{ file.key }}')">{{ file.original_name|truncatechars:20 }}</td>
 			{% else %}
-				<td title="Aucun aperçu disponible">{{ file.original_name }}</td>
+				<td title="Aucun aperçu disponible">{{ file.original_name|truncatechars:20 }}</td>
 			{% endif %}
 			<td>{{ file.extension|upper }}</td>
 	     	<td>{{ file.typeName }}</td>

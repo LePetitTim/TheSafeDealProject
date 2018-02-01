@@ -1,4 +1,5 @@
-{% load staticfiles %}
+{% load staticfiles filters %}
+
 <html>
 <head>
         <meta charset="utf-8" />
@@ -63,10 +64,10 @@
 	    </tr>
 		<tr>
 		{% for projet in unvalidated_projects %}
-    		<th title={{ projet.description }}>{{ projet.titre }}</th>
-	     	<td>{{ projet.client }}</td>
-	     	<td>{{ projet.prestataire }}</td>
-	     	<td>{{ projet.professionnel }}</td>
+    		<th title='{{ projet.description }}'>{{ projet.titre|truncatechars:20 }}</th>
+	     	<td title='{{ projet.client }}'>{{ projet.client|name2email }}</td>
+	     	<td title='{{ projet.prestataire }}'>{{ projet.prestataire|name2email }}</td>
+	     	<td title='{{ projet.professionnel }}'>{{ projet.professionnel|name2email }}</td>
 	     	<td>{{ projet.prix }}</td>
 	     	<td>{{ projet.date_debut|date:"d M Y" }}</td>
 	     	<td>{{ projet.date_fin|date:"d M Y" }}</td>
@@ -103,10 +104,10 @@
 		
 		{% for projet in validated_projects %}
 		<tr>
-	     <th title={{ projet.description }}>{{ projet.titre }}</th>
-	     <td>{{ projet.client }}</td>
-	     <td>{{ projet.prestataire }}</td>
-	     <td>{{ projet.professionnel }}</td>
+	     <th title='{{ projet.description }}'>{{ projet.titre|truncatechars:20 }}</th>
+	     <td title='{{ projet.client }}'>{{ projet.client|name2email }}</td>
+	     <td title='{{ projet.prestataire }}'>{{ projet.prestataire|name2email }}</td>
+	     <td title='{{ projet.professionnel }}'>{{ projet.professionnel|name2email }}</td>
 	     <td>{{ projet.prix }}</td>
 	     <td>{{ projet.date_debut|date:"d M Y" }}</td>
 	     <td>{{ projet.date_fin|date:"d M Y" }}</td>

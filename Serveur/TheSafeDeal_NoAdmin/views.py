@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from .forms import SignupForm
 from .forms import NewProjectForm
 from .forms import FileForm
@@ -162,8 +162,6 @@ def showProject(request, uidb32):
                     original_name = str(request.FILES['document'])
                     new_document.original_name = original_name
                     new_document.extension = new_document.get_extension()
-                    if len(new_document.original_name) > 30 :
-                        new_document.original_name = str(original_name).replace(original_name,original_name[0:30]+"."+new_document.extension)
                     new_document.key = get_random_string(length=32)
                     new_document.save()
                     documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
@@ -446,12 +444,12 @@ def api_token(request):
 				session = request.session
 				response = HttpResponse(content='{ "token" : '+ '"'+token+'"' +'}')
 				response.set_cookie(key='sessionid', value=session)
+				logout(request)
 				return response
 			else :
 				return HttpResponse("NO_ACCOUNT")
 		else :
 			return HttpResponse("NO_POST")
-	
 	return HttpResponse("Veuillez vous déconnecter")
 
 
@@ -464,6 +462,26 @@ def api_projects(request, token):
 			return HttpResponse(stringify_projects_list(projects))
 		else:
 			return HttpResponse('Aucun compte trouvé pour ce token')
+
+
+
+def api_upload(request, token, project_key):
+	if request.FILES :
+		new_document = File.objects.create()
+		new_document.projet_key = project_key
+		new_document.typeName = "photos"
+		try:
+			new_document.uploaded_by = CustomUser.objects.get(api_token=request.user).username
+		except Exception as e:
+			return HttpResponse("Le token a expiré, veuillez recommencer")
+		original_name = str(request.FILES['fileURL'])
+		new_document.original_name = original_name
+		new_document.extension = new_document.get_extension()
+		new_document.key = get_random_string(length=32)
+		new_document.save()
+		return HttpResponse('Uploadé')
+	return HttpResponse('Aucun fichier dans la requête')
+
 
 def about(request):
     """
