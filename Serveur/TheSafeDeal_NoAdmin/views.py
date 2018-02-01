@@ -26,8 +26,9 @@ import os
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .functions import *
-
-
+import time
+from datetime import datetime
+from django.core.exceptions import ObjectDoesNotExist
 # Definition des vues Django. Permet de recuperer les informations dans la base de donnée, faire les redirections sur les autres pages.
 # L'affichage de la page actuel ...
 
@@ -469,6 +470,48 @@ def about(request):
     Affiche la page a propos.
     """
     return render(request, 'about.html',{})
+def getAllYear(year,uidb32,date_projet):
+    r={}
+    for i in range(0,len(year)):
+        m=0
+        yea={}
+        d=0
+        date = time.mktime(datetime.strptime(str(year[i]) + '-01-01', "%Y-%m-%d").timetuple())
+        last_of_the_year = time.mktime(datetime.strptime(str(year[i]) + '-12-31', "%Y-%m-%d").timetuple())
+        while date <= last_of_the_year:
+            y = datetime.fromtimestamp(date).year
+            if m !=datetime.fromtimestamp(date).month:
+                month={}
+            m = datetime.fromtimestamp(date).month
+            if d !=datetime.fromtimestamp(date).day:
+                couleur={}
+            d = datetime.fromtimestamp(date).day
+            w = datetime.fromtimestamp(date).weekday()
+            c = define_color_event(date,uidb32)
+            couleur[w] = c
+            month[d] = couleur
+            yea[m]=month
+            r[y]=yea
+            date =date+24*3600
+    return r
+
+def define_color_event(date,projet_key):
+    datesProjet = Event.objects.all().filter(projet_key=projet_key)
+    couleur="B"
+    for i in datesProjet:
+        date_debut_Projecti = i.date_debut.timestamp()
+        date_fin_Projecti = i.date_fin.timestamp()
+        if date_debut_Projecti <= date and date_fin_Projecti >= date:            
+            if i.type_event == "En Travaux":
+                couleur = "R"
+            elif i.type_event == "Loué":
+                couleur = "V"
+            elif i.type_event == "En cours de reservation":
+                couleur = "O"
+            else:
+                couleur = "B"
+            return couleur
+    return couleur
 
 def event(request,uidb32):
     if request.user.is_authenticated():
@@ -492,9 +535,20 @@ def event(request,uidb32):
                 form = EventForm()
                 information = ""
             date_projet = Event.objects.all().filter(projet_key=uidb32)
-            return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet})
+            year = []
+            debut_year = date_projet[0].date_debut.year
+            fin_year = date_projet[0].date_fin.year
+            for i in range(0,len(date_projet)-1):
+                if debut_year not in year:
+                    year.append(debut_year)
+                debut_year = date_projet[i].date_debut.year
+                if fin_year not in year:
+                    year.append(fin_year)
+                fin_year = date_projet[i].date_fin.year
 
+            tabYear = getAllYear(year,uidb32,date_projet)
 
+            return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear})
         else:
             return redirect('project',uidb32=uidb32)
     else:

@@ -1,7 +1,43 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load custom_tags %}
 {% block content %}
-
+<head> 
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script> 
+<script type="text/javascript"> 
+	jQuery(function($){
+	   $('.year').hide();
+	   $('.year:first').show();	   
+	   $('.years a:first').addClass('active');
+	   $('.month').hide();
+	   $('.month:first').show();
+	   $('.months a:first').addClass('active');
+	   var current = 1;
+	   $('.months a').click(function(){
+			var month = $(this).attr('id').replace('linkMonth','');
+			if(month != current){
+				$('#month'+current).slideUp();
+				$('#month'+month).slideDown();
+				$('.months a').removeClass('active'); 
+				$('.months a#linkMonth'+month).addClass('active'); 
+				current = month;
+			}
+	   });
+	   var currentY = {{ tabYear|get_item }};
+	   $('.years a').click(function(){
+			var year = $(this).attr('id').replace('linkYear','');
+			if(year != current){
+				$('#year'+current).slideUp();
+				$('#year'+year).slideDown();
+				$('.years a ').removeClass('active');
+				$('.years a#linkYear'+year).addClass('active');
+				current=year;
+			}
+			return false;
+		});
+	});
+</script> 
+</head> 
 
 
 <form method='post'>
@@ -10,10 +46,57 @@
 	{{ form }}
 	<button>Importer</button>
 </form>
-{% for date in dates %}
-	<p>
-	{{ date.date_debut }} |
-	{{ date.date_fin }}
-	</p>
+{% for key,value in tabYear.items %}
+	<div class="years"><a href="#" id="linkYear{{ key }}">{{ key }}</a></div>
 {% endfor %}
+
+{% for key, value in tabYear.items %}
+		<div class="year" id="year{{ key }}">
+			<div class="months">
+				<ul>{% for key2, value2 in value.items %}
+						<li><a href="#" id="linkMonth{{ key2 }}">{{ key2|to_month }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% for key2, value2 in value.items %}
+				<div class="month" id="month{{ key2 }}">
+					<table>
+						<thead>
+							<tr>
+								<th>Lun</th>
+								<th>Mar</th>
+								<th>Mer</th>
+								<th>Jeu</th>
+								<th>Ven</th>
+								<th>Sam</th>
+								<th>Dim</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								{% for key3, value3 in value2.items %}
+									{% for key4, value4 in value3.items %}
+										{% if key3 == 1 %}
+											{% if key3 != key4|add:1 %}
+												<td colspan="{{ key4 }}"></td>
+										{% endif %}{% endif %}
+										<td bgcolor="{{ value4|replace_colour }}">
+											<div class="relative">
+												<div class="day">{{ key3 }}</div>
+											</div>
+										</td>
+										{% if key4 == 6 %}
+											</tr><tr>
+										{% endif %}
+									{% endfor %}
+								{% endfor %}
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			{% endfor %}
+		</div>
+{% endfor %}
+
+
 {% endblock %}

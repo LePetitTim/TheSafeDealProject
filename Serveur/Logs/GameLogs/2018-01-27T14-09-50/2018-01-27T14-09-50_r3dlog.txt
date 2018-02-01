@@ -1,0 +1,18 @@
+000000.000| ALWAYS| Logging started at 2018-01-27T14:09:50.951
+000000.005|   OKAY| Riot::RADS::Reader::RadsMain::Initialize: RADS library initializing with specified working directory "C:\Users\ISEN\Desktop\TheSafeDealProject\TheSafeDealProject\Serveur".
+000000.005|   OKAY| Riot::RADS::Reader::RuntimeEnvironment::Create: Creating RADS runtime environment: RADS root directory = "C:/Users/ISEN/Desktop/TheSafeDealProject/TheSafeDealProject/Serveur"
+000000.005|   WARN| Riot::RADS::Reader::RuntimeEnvironment::GetProjectTypeNameAndVersion: Did not find keywords "projects" or "solutions" in path C:/Users/ISEN/Desktop/TheSafeDealProject/TheSafeDealProject/Serveur
+000000.005|  ERROR| Riot::RADS::Reader::RuntimeEnvironment::Create: RADS runtime environment creation failed because it was unable to get the project information.
+000000.005|  ERROR| Riot::RADS::Reader::RadsMain::Initialize: RADS library initialization failed to create the runtime environment.
+000000.005|  ERROR| Failed to initialize Rads library.
+000000.009| ALWAYS| Begin command line toggles...
+000000.009| ALWAYS| End command line toggles.
+000000.011|   OKAY| Unable to process data overlay file ./ToolsConfig.xml, defaulting to overlay now
+000000.011| ALWAYS| Data overlay start folder initialized to DATA, Content/Src
+000000.012| ALWAYS| Build Version: Version 8.2.216.409 (Jan 25 2018/14:20:44) [PUBLIC] <__MAIN__> ChangeList: 2160409
+000000.105|  ERROR| Failed to extract information from command line string for observer/replay mode
+000000.105| ALWAYS| Destroying the Renderer (1)
+000000.106| ALWAYS| game::Shutdown
+000000.106| ALWAYS| ClientFacade::Stop
+000000.106| ALWAYS| Bugsplat disabled
+000000.106| ALWAYS| Exiting WinMain
