@@ -29,6 +29,7 @@ from .functions import *
 import time
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
+import base64
 # Definition des vues Django. Permet de recuperer les informations dans la base de donnée, faire les redirections sur les autres pages.
 # L'affichage de la page actuel ...
 
@@ -464,23 +465,39 @@ def api_projects(request, token):
 			return HttpResponse('Aucun compte trouvé pour ce token')
 
 
-
+@csrf_exempt
 def api_upload(request, token, project_key):
-	if request.FILES :
-		new_document = File.objects.create()
-		new_document.projet_key = project_key
-		new_document.typeName = "photos"
-		try:
-			new_document.uploaded_by = CustomUser.objects.get(api_token=request.user).username
-		except Exception as e:
-			return HttpResponse("Le token a expiré, veuillez recommencer")
-		original_name = str(request.FILES['fileURL'])
-		new_document.original_name = original_name
-		new_document.extension = new_document.get_extension()
-		new_document.key = get_random_string(length=32)
-		new_document.save()
-		return HttpResponse('Uploadé')
-	return HttpResponse('Aucun fichier dans la requête')
+	if request.POST :
+		if request.POST['files'] :
+			list_picts = request.POST['files']
+			error = []
+			for hashe in list_picts:
+				new_document = File.objects.create()
+				try:
+					new_document.document = base64.b64decode(hashe)
+				except Exception as e:
+					error.append("La "+str(list_picts.index(hashe))+" ème image est corrompue ou mal encodée. Veuillez recommencer")
+				new_document.projet_key = project_key
+				new_document.typeName = "photos"
+				try:
+					new_document.uploaded_by = CustomUser.objects.get(api_token=request.user).username
+				except Exception as e:
+					return HttpResponse("Le token a expiré, veuillez recommencer")
+				original_name = "upload_"+str(get_random_string(5))
+				new_document.original_name = original_name
+				new_document.extension = new_document.get_extension()
+				new_document.key = get_random_string(length=32)
+				new_document.save()
+			if len(error) != 0 :
+				http_response = ""
+				for erreur in error :
+					http_response = http_response + erreur + "<br />"
+				return HttpResponse(http_response)
+			return HttpResponse('Les photos ont bien été uploadées.')
+		else : 
+			return HttpResponse('NO_FILES')
+	else :
+		return HttpResponse('NO_POST')
 
 
 def about(request):
