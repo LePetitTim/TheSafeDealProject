@@ -2,6 +2,9 @@
 
 from datetime import datetime, timezone
 from .models import *
+from django.conf import settings
+from PIL import Image
+
 
 # FONCTION QUI RETOURNE UNE LISTE DE DICTIONNAIRES, REPRESENTANT LES PROJETS
 def stringify_projects_list(projects_list):
@@ -66,3 +69,29 @@ def get_name_from_email(email):
 		return CustomUser.objects.get(email = email).username
 	else :
 		return ''
+
+# Fonction qui va enregistrer une image dans le dossier MEDIA dans le dossier du projet (UTILISE POUR LES UPLOAD API)
+# Return l'image ouverte avec PIL
+def save_image(data,project_key,image_name):
+	with open(settings.MEDIA_ROOT+"/"+project_key+"/"+image_name, "wb") as fh:
+		fh.write(data)
+	#image = Image.open(settings.MEDIA_ROOT+"/"+project_key+"/"+image_name)
+	image = open(settings.MEDIA_ROOT+"/"+project_key+"/"+image_name, "r")
+	return image
+
+# Fonction qui return le hash à décoder en base 64 à partir d'un encodage (supprime le ';base64,...'')
+def get_hash(data):
+	i = data.find('base64,')
+	i = i + 7
+	return data[i:len(data)]
+
+# Fonction qui return l'extension d'une photo uploadée (avant encodage)
+def get_extension_pic(data):
+	i = data.find(';base64')
+	i = i - 1
+	j = i
+	extension = ''
+	while data[i] != '/':
+		extension = extension + data[i]
+		i = i - 1
+	return data[i+1:j+1]

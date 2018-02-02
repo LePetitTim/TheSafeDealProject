@@ -30,6 +30,8 @@ import time
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 import base64
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
 # Definition des vues Django. Permet de recuperer les informations dans la base de donnée, faire les redirections sur les autres pages.
 # L'affichage de la page actuel ...
 
@@ -44,279 +46,279 @@ def home(request):
 	return render(request, 'home.html', {'CustomUser' : customUser, 'CustomFile' : file})
 
 def register(request):
-    """
-    Affiche la page registration.
-    SI le formulaire est valide, le compte est crée mais inactif. L'utilisateur doit se connecter à sa boite mail pour activer son compte.
-    (/!\ Serveur SMTP bloqué, besoin de modifier les parametres dans : TheSafeDeal/settings.py pour envoyer sur un serveur SMTP fonctionnel).
-    Envoie un mail avec comme objet : Active ton compte provenant de l'adresse mail du serveur SMTP. Avec comme description la page acc_active_email.html.
-    La page contient un token unique pour l'activation du compte. L'url pour l'activation utilise ce token.
-    """
-    if request.method == 'POST':
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            #Remove user.is_active = True + put other part + change SMTP in settings
-            user.is_active = True
-            user.save()
-            return redirect('home')
-            """
-            user.is_active = False
-            user.save()
-            current_site = get_current_site(request)
-            mail_subject = 'Active ton compte.'
-            message = render_to_string('acc_active_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid':urlsafe_base64_encode(force_bytes(user.pk)),
-                'token':account_activation_token.make_token(user),
-            })
-            to_email = form.cleaned_data.get('email')
-            email = EmailMessage(
-                        mail_subject, message, to=[to_email]
-            )
-            email.send()
-            return HttpResponse("Veuillez s'il vous plait confirmer votre email pour completer le processus")
-            """
-    else:
-        form = SignupForm()
-    return render(request, 'register.html', {'form': form})
+	"""
+	Affiche la page registration.
+	SI le formulaire est valide, le compte est crée mais inactif. L'utilisateur doit se connecter à sa boite mail pour activer son compte.
+	(/!\ Serveur SMTP bloqué, besoin de modifier les parametres dans : TheSafeDeal/settings.py pour envoyer sur un serveur SMTP fonctionnel).
+	Envoie un mail avec comme objet : Active ton compte provenant de l'adresse mail du serveur SMTP. Avec comme description la page acc_active_email.html.
+	La page contient un token unique pour l'activation du compte. L'url pour l'activation utilise ce token.
+	"""
+	if request.method == 'POST':
+		form = SignupForm(request.POST)
+		if form.is_valid():
+			user = form.save(commit=False)
+			#Remove user.is_active = True + put other part + change SMTP in settings
+			user.is_active = True
+			user.save()
+			return redirect('home')
+			"""
+			user.is_active = False
+			user.save()
+			current_site = get_current_site(request)
+			mail_subject = 'Active ton compte.'
+			message = render_to_string('acc_active_email.html', {
+				'user': user,
+				'domain': current_site.domain,
+				'uid':urlsafe_base64_encode(force_bytes(user.pk)),
+				'token':account_activation_token.make_token(user),
+			})
+			to_email = form.cleaned_data.get('email')
+			email = EmailMessage(
+						mail_subject, message, to=[to_email]
+			)
+			email.send()
+			return HttpResponse("Veuillez s'il vous plait confirmer votre email pour completer le processus")
+			"""
+	else:
+		form = SignupForm()
+	return render(request, 'register.html', {'form': form})
 
 def activate(request, uidb64, token):
-    """
-    Utilisé pour l'activation du compte. Si le token n'existe pas(url crée de toute pièce). Affichage d'un message d'erreur.
-    """
-    try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        User = get_user_model()
-        user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        return redirect('home')
-    else:
-        return HttpResponse("Le lien d'activation est invalide!")
-        
+	"""
+	Utilisé pour l'activation du compte. Si le token n'existe pas(url crée de toute pièce). Affichage d'un message d'erreur.
+	"""
+	try:
+		uid = force_text(urlsafe_base64_decode(uidb64))
+		User = get_user_model()
+		user = User.objects.get(pk=uid)
+	except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+		user = None
+	if user is not None and account_activation_token.check_token(user, token):
+		user.is_active = True
+		user.save()
+		login(request, user)
+		return redirect('home')
+	else:
+		return HttpResponse("Le lien d'activation est invalide!")
+		
 def showProject(request, uidb32):
-    """
-    Affiche le projet avec la clé uidb32. La clé est unique.
-    Le projet est affiché sous certaines conditions : 
-    - l'utilisateur doit etre authentifié.
-    - le projet doit exister
-    - L'utilisateur doit faire partie du projet.
-    
-    Cette page affiche en détail les fichiers du projet. Les differents éléments utiles provenant du modèle Projet.
-    Possibilité d'ajouter un prestataire si il n'est pas choisie a la création.
-    Possibilité de télécharger les fichiers du projet.
-    Possibilité d'atteindre le contrat de se projet. (voir contract).
-    """
-    valide = ""
-    client=""
-    professionnel=""
-    prestataire=""
-    if request.user.is_authenticated():
-        utilisateur = CustomUser.objects.get(username=request.user)
-        if Projet.objects.filter(key=uidb32).exists(): 
-            project = Projet.objects.get(key=uidb32)
-        else:
-            valide = "Le Projet n'existe pas."
-            return render(request, 'project.html',{'valide':valide})
+	"""
+	Affiche le projet avec la clé uidb32. La clé est unique.
+	Le projet est affiché sous certaines conditions : 
+	- l'utilisateur doit etre authentifié.
+	- le projet doit exister
+	- L'utilisateur doit faire partie du projet.
+	
+	Cette page affiche en détail les fichiers du projet. Les differents éléments utiles provenant du modèle Projet.
+	Possibilité d'ajouter un prestataire si il n'est pas choisie a la création.
+	Possibilité de télécharger les fichiers du projet.
+	Possibilité d'atteindre le contrat de se projet. (voir contract).
+	"""
+	valide = ""
+	client=""
+	professionnel=""
+	prestataire=""
+	if request.user.is_authenticated():
+		utilisateur = CustomUser.objects.get(username=request.user)
+		if Projet.objects.filter(key=uidb32).exists(): 
+			project = Projet.objects.get(key=uidb32)
+		else:
+			valide = "Le Projet n'existe pas."
+			return render(request, 'project.html',{'valide':valide})
 
-        user = CustomUser.objects.all()
-        for i in user:
-            if project.prestataire == i.email:
-                prestataire = i.username
-            if project.client == i.email:
-                client = i.username
-            if project.professionnel == i.email:
-                professionnel = i.username
-        if request.user.username != prestataire and request.user.username != client and request.user.username != professionnel :
-            valide = "Vous n'avez pas accès à ce projet."
-            return render(request, 'project.html',{'valide':valide})
+		user = CustomUser.objects.all()
+		for i in user:
+			if project.prestataire == i.email:
+				prestataire = i.username
+			if project.client == i.email:
+				client = i.username
+			if project.professionnel == i.email:
+				professionnel = i.username
+		if request.user.username != prestataire and request.user.username != client and request.user.username != professionnel :
+			valide = "Vous n'avez pas accès à ce projet."
+			return render(request, 'project.html',{'valide':valide})
 
-        documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
-        if request.method == "POST":
-            if 'email' in request.POST :
-                email_new_prestataire = request.POST['email']
-                if CustomUser.objects.filter(email=email_new_prestataire).exists() :
-                    new_prestataire = CustomUser.objects.get(email=email_new_prestataire)
-                    if new_prestataire.typeUser == 'Prestataire':
-                        project.prestataire = email_new_prestataire
-                        project.save()
-                        new_prestataire.add_project(uidb32)
-                        prestataire = new_prestataire.username
-                        valide = "Prestataire ajouté avec succès!"
-                        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' :documents_list_of_user_of_project})
-                        #return redirect(uidb32)
-                    else:
-                        valide = "L'utilisateur entré n'est pas un Prestataire."
-                        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
-            elif request.FILES :
-                form = FileForm(request.POST,request.FILES)
-                if form.is_valid():
-                    new_document = form.save(commit=False)
-                    new_document.projet_key = uidb32
-                    new_document.typeName = request.POST['typeName']
-                    new_document.uploaded_by = CustomUser.objects.get(username=request.user).username
-                    original_name = str(request.FILES['document'])
-                    new_document.original_name = original_name
-                    new_document.extension = new_document.get_extension()
-                    new_document.key = get_random_string(length=32)
-                    new_document.save()
-                    documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
-                    valide = "Votre document a bien été uploadé !"
-            else:
-                valide = "Aucun utilisateur trouvé à cette adresse email."
-                return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
+		documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
+		if request.method == "POST":
+			if 'email' in request.POST :
+				email_new_prestataire = request.POST['email']
+				if CustomUser.objects.filter(email=email_new_prestataire).exists() :
+					new_prestataire = CustomUser.objects.get(email=email_new_prestataire)
+					if new_prestataire.typeUser == 'Prestataire':
+						project.prestataire = email_new_prestataire
+						project.save()
+						new_prestataire.add_project(uidb32)
+						prestataire = new_prestataire.username
+						valide = "Prestataire ajouté avec succès!"
+						return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' :documents_list_of_user_of_project})
+						#return redirect(uidb32)
+					else:
+						valide = "L'utilisateur entré n'est pas un Prestataire."
+						return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
+			elif request.FILES :
+				form = FileForm(request.POST,request.FILES)
+				if form.is_valid():
+					new_document = form.save(commit=False)
+					new_document.projet_key = uidb32
+					new_document.typeName = request.POST['typeName']
+					new_document.uploaded_by = CustomUser.objects.get(username=request.user).username
+					original_name = str(request.FILES['document'])
+					new_document.original_name = original_name
+					new_document.extension = new_document.get_extension()
+					new_document.key = get_random_string(length=32)
+					new_document.save()
+					documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
+					valide = "Votre document a bien été uploadé !"
+			else:
+				valide = "Aucun utilisateur trouvé à cette adresse email."
+				return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : documents_list_of_user_of_project})
 
-        if request.method == "GET":
-            if 'delete' in request.GET :
-                if Files.objects.filter(key=request.GET['delete']):
-                    delete_file = Files.objects.get(key=request.GET['delete'])
-                    if utilisateur.username == delete_file.uploaded_by :
-                        delete_file.delete()
-                        os.remove(settings.MEDIA_ROOT+"/"+str(delete_file.document))
-                        documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
-                        return redirect("/project/"+project.key)
-        return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : sorted(documents_list_of_user_of_project, key=lambda files: files.upload_date, reverse=True), 'state' : get_actual_state(project.key)})
-    else:
-        valide = "Veuillez vous connecter pour voir cette page."
-        return render(request, 'project.html',{'valide':valide})
+		if request.method == "GET":
+			if 'delete' in request.GET :
+				if Files.objects.filter(key=request.GET['delete']):
+					delete_file = Files.objects.get(key=request.GET['delete'])
+					if utilisateur.username == delete_file.uploaded_by :
+						delete_file.delete()
+						os.remove(settings.MEDIA_ROOT+"/"+str(delete_file.document))
+						documents_list_of_user_of_project = utilisateur.get_user_and_project_files(uidb32)
+						return redirect("/project/"+project.key)
+		return render(request, 'project.html',{'projet':project, 'valide':valide, 'nameClient' : client, 'nameProfessionnel': professionnel, 'namePrestataire': prestataire, 'project_key': project.key, 'files' : sorted(documents_list_of_user_of_project, key=lambda files: files.upload_date, reverse=True), 'state' : get_actual_state(project.key)})
+	else:
+		valide = "Veuillez vous connecter pour voir cette page."
+		return render(request, 'project.html',{'valide':valide})
 
 def connected(request):
-    """
-    Affiche tous les projets de l'utilisateur, permet d'ajouter, d'activer ou refuser un projet.
-    
-    Cette page s'affiche normalement sous certaines conditions : 
-    - l'utilisateur doit etre authentifié.
+	"""
+	Affiche tous les projets de l'utilisateur, permet d'ajouter, d'activer ou refuser un projet.
+	
+	Cette page s'affiche normalement sous certaines conditions : 
+	- l'utilisateur doit etre authentifié.
 
-    Cette page affiche en détail chaque projet de l'utilisateur. Permet également de rajouter un nouveau projet.
-    Si le formulaire pour l'ajout d'un nouveau projet est valide, le projet est inactif et il suffit d'appuyer sur le bouton valider 
-    (et que chaque utilisateur le fasse) pour que le projet soit accepté et visible pour chacun.
-    """
-    user = request.user
-    if user.is_authenticated() :
-        utilisateur = CustomUser.objects.get(username=request.user)
-        validated_projects = utilisateur.get_validated_projects_list()[0]
-        unvalidated_projects = utilisateur.get_validated_projects_list()[1]
+	Cette page affiche en détail chaque projet de l'utilisateur. Permet également de rajouter un nouveau projet.
+	Si le formulaire pour l'ajout d'un nouveau projet est valide, le projet est inactif et il suffit d'appuyer sur le bouton valider 
+	(et que chaque utilisateur le fasse) pour que le projet soit accepté et visible pour chacun.
+	"""
+	user = request.user
+	if user.is_authenticated() :
+		utilisateur = CustomUser.objects.get(username=request.user)
+		validated_projects = utilisateur.get_validated_projects_list()[0]
+		unvalidated_projects = utilisateur.get_validated_projects_list()[1]
 
-        if request.method == "POST":
-            form = NewProjectForm(request.POST)
+		if request.method == "POST":
+			form = NewProjectForm(request.POST)
 
-            if form.is_valid(): 
-                cleaned_info = form.cleaned_data
-                new_project = form.save(commit=False)
-                new_project.key = get_random_string(length=32)
-                new_project.date_debut = timezone.now()
+			if form.is_valid(): 
+				cleaned_info = form.cleaned_data
+				new_project = form.save(commit=False)
+				new_project.key = get_random_string(length=32)
+				new_project.date_debut = timezone.now()
 
-                if utilisateur.email != cleaned_info['client'] and utilisateur.email != cleaned_info['professionnel'] and utilisateur.email != cleaned_info['prestataire'] :
-                    error = "Vous ne pouvez pas créer un projet sans en faire partie! Voyons..."
-                    return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects}) 
+				if utilisateur.email != cleaned_info['client'] and utilisateur.email != cleaned_info['professionnel'] and utilisateur.email != cleaned_info['prestataire'] :
+					error = "Vous ne pouvez pas créer un projet sans en faire partie! Voyons..."
+					return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects}) 
 
-                if CustomUser.objects.filter(email = cleaned_info['client']).exists() and CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
-                    if cleaned_info['prestataire'] == '':
-                        cli = CustomUser.objects.get(email = cleaned_info['client'])
-                        pro = CustomUser.objects.get(email = cleaned_info['professionnel'])
-                        if cli.typeUser == 'Client' and pro.typeUser == 'Professionnel':
-                            new_project.save()
-                            cli.add_project(new_project.key)
-                            pro.add_project(new_project.key)
-                            os.mkdir(settings.MEDIA_ROOT+"/"+new_project.key)
-                            return redirect(connected)
-                        else:
-                            error = "Oups! L'adresse email entrée du Professionnel ou Client ne correpond pas à la bonne personne!"
-                            return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
-                    else:
-                        if CustomUser.objects.filter(email = cleaned_info['prestataire']).exists():
-                            pre = CustomUser.objects.get(email = cleaned_info['prestataire'])
-                            pro = CustomUser.objects.get(email = cleaned_info['professionnel'])
-                            cli = CustomUser.objects.get(email = cleaned_info['client'])
-                            if pre.typeUser == 'Prestataire' and pro.typeUser == 'Professionnel' and cli.typeUser == 'Client':
-                                new_project.save()
-                                pre.add_project(new_project.key)
-                                pro.add_project(new_project.key)
-                                cli.add_project(new_project.key)
-                                os.mkdir(settings.MEDIA_ROOT+"/"+new_project.key)
-                                return redirect(connected)
-                            else:
-                                error = "Oups! L'adresse email entrée du Professionnel ou Prestataire ou Client ne correpond pas à la bonne entité !"
-                                return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
-                        else:
-                            error = "Le Prestataire n'est pas enregistré à cette adresse mail, veuillez réessayer."
-                            return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
-                else:
-                    if not CustomUser.objects.filter(email = cleaned_info['client']).exists():
-                        error = "Le Client n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
-                    elif not CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
-                        error = "Le Professionnel n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
-                    return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
-        
-        elif request.method == 'GET' and 'key' in request.GET and 'validate' in request.GET :
-            key = request.GET['key']
-            validate = request.GET['validate']
-            if validate == 'True' :
-                utilisateur.validate_project(key)
-            elif validate == 'False':
-                utilisateur.unvalidate_project(key)
-            return redirect(connected)
-        else:
-            form = NewProjectForm()
-        return render(request, 'connected.html',{'form':form, 'user':request.user, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
-    else:
-        form = NewProjectForm()
+				if CustomUser.objects.filter(email = cleaned_info['client']).exists() and CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
+					if cleaned_info['prestataire'] == '':
+						cli = CustomUser.objects.get(email = cleaned_info['client'])
+						pro = CustomUser.objects.get(email = cleaned_info['professionnel'])
+						if cli.typeUser == 'Client' and pro.typeUser == 'Professionnel':
+							new_project.save()
+							cli.add_project(new_project.key)
+							pro.add_project(new_project.key)
+							os.mkdir(settings.MEDIA_ROOT+"/"+new_project.key)
+							return redirect(connected)
+						else:
+							error = "Oups! L'adresse email entrée du Professionnel ou Client ne correpond pas à la bonne personne!"
+							return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
+					else:
+						if CustomUser.objects.filter(email = cleaned_info['prestataire']).exists():
+							pre = CustomUser.objects.get(email = cleaned_info['prestataire'])
+							pro = CustomUser.objects.get(email = cleaned_info['professionnel'])
+							cli = CustomUser.objects.get(email = cleaned_info['client'])
+							if pre.typeUser == 'Prestataire' and pro.typeUser == 'Professionnel' and cli.typeUser == 'Client':
+								new_project.save()
+								pre.add_project(new_project.key)
+								pro.add_project(new_project.key)
+								cli.add_project(new_project.key)
+								os.mkdir(settings.MEDIA_ROOT+"/"+new_project.key)
+								return redirect(connected)
+							else:
+								error = "Oups! L'adresse email entrée du Professionnel ou Prestataire ou Client ne correpond pas à la bonne entité !"
+								return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
+						else:
+							error = "Le Prestataire n'est pas enregistré à cette adresse mail, veuillez réessayer."
+							return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
+				else:
+					if not CustomUser.objects.filter(email = cleaned_info['client']).exists():
+						error = "Le Client n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
+					elif not CustomUser.objects.filter(email = cleaned_info['professionnel']).exists():
+						error = "Le Professionnel n'est pas enregistré à cette adresse mail, veuillez recréer le projet."
+					return render(request, 'connected.html',{'form':form, 'error': error, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
+		
+		elif request.method == 'GET' and 'key' in request.GET and 'validate' in request.GET :
+			key = request.GET['key']
+			validate = request.GET['validate']
+			if validate == 'True' :
+				utilisateur.validate_project(key)
+			elif validate == 'False':
+				utilisateur.unvalidate_project(key)
+			return redirect(connected)
+		else:
+			form = NewProjectForm()
+		return render(request, 'connected.html',{'form':form, 'user':request.user, 'validated_projects':validated_projects, 'unvalidated_projects':unvalidated_projects})
+	else:
+		form = NewProjectForm()
 
-    return render(request, 'connected.html',{'form':form, 'user':request.user})
+	return render(request, 'connected.html',{'form':form, 'user':request.user})
 
 def download(request, project_key, document_key):
-    """
-    Permet de télécharger les fichiers du projet. Chaque projet a son propre dossier avec tous les elements.
-    Cette vue utilise le modele File pour envoyer les fichiers.
+	"""
+	Permet de télécharger les fichiers du projet. Chaque projet a son propre dossier avec tous les elements.
+	Cette vue utilise le modele File pour envoyer les fichiers.
 
-    Cette fonctionnalité est possible normalement uniquement lorsque : 
-    - l'utilisateur doit etre authentifié.
+	Cette fonctionnalité est possible normalement uniquement lorsque : 
+	- l'utilisateur doit etre authentifié.
 
-    """
-    if request.user.is_authenticated():
-        utilisateur = CustomUser.objects.get(username=request.user)
-        if request.method == 'POST':
-            if request.POST['download']:
-                if Files.objects.filter(key=document_key).exists() :
-                    document = Files.objects.get(key=document_key)
-                else:
-                    redirect(showProject)
-                if Projet.objects.filter(key=project_key).exists():
-                    projet = Projet.objects.get(key=project_key)
-                else:
-                    redirect(showProject)
-                if document in utilisateur.get_user_and_project_files(project_key):
-                    with open(settings.MEDIA_ROOT+"/"+str(document.document), 'rb') as fh:
-                        response = HttpResponse(fh.read(), content_type="application/force-download")
-                        response['Content-Disposition'] = 'inline; filename=' + document.original_name
-                        return response
-                else:
-                    valide = "Vous n'avez pas les droits d'accès à ce fichier."
-                    return render(request, 'project.html',{'valide':valide})
+	"""
+	if request.user.is_authenticated():
+		utilisateur = CustomUser.objects.get(username=request.user)
+		if request.method == 'POST':
+			if request.POST['download']:
+				if Files.objects.filter(key=document_key).exists() :
+					document = Files.objects.get(key=document_key)
+				else:
+					redirect(showProject)
+				if Projet.objects.filter(key=project_key).exists():
+					projet = Projet.objects.get(key=project_key)
+				else:
+					redirect(showProject)
+				if document in utilisateur.get_user_and_project_files(project_key):
+					with open(settings.MEDIA_ROOT+"/"+str(document.document), 'rb') as fh:
+						response = HttpResponse(fh.read(), content_type="application/force-download")
+						response['Content-Disposition'] = 'inline; filename=' + document.original_name
+						return response
+				else:
+					valide = "Vous n'avez pas les droits d'accès à ce fichier."
+					return render(request, 'project.html',{'valide':valide})
 
-        return redirect("/project/"+project_key)
-    else:
-        valide = 'Veuillez vous connecter pour accéder à cette fonctionnalité.'
-        return render(request, 'project.html',{'valide':valide})
+		return redirect("/project/"+project_key)
+	else:
+		valide = 'Veuillez vous connecter pour accéder à cette fonctionnalité.'
+		return render(request, 'project.html',{'valide':valide})
 
 def contract(request, uidb32):
 	"""
-    Permet d'afficher le contrat d'un projet, permet de le modifier en tant que professionnelle et l'afficher en tant que Client.
+	Permet d'afficher le contrat d'un projet, permet de le modifier en tant que professionnelle et l'afficher en tant que Client.
 
-    Il est egalement possible de le modifier pour le Professionnelle et le telecharger pour le client et le professionnelle.
-    
-    La page s'affiche est possible normalement uniquement lorsque : 
-    - l'utilisateur est authentifié.
-    - l'utilisateur n'est pas un prestataire
-    - le contrat existe (sauf pour professionnelle -> Formulaire pour la creation d'un nouveau contrat)
-    - le projet existe
+	Il est egalement possible de le modifier pour le Professionnelle et le telecharger pour le client et le professionnelle.
+	
+	La page s'affiche est possible normalement uniquement lorsque : 
+	- l'utilisateur est authentifié.
+	- l'utilisateur n'est pas un prestataire
+	- le contrat existe (sauf pour professionnelle -> Formulaire pour la creation d'un nouveau contrat)
+	- le projet existe
 
-    """
+	"""
 	telecharger = False
 	save = False
 	contractExist=False
@@ -445,13 +447,13 @@ def api_token(request):
 				session = request.session
 				response = HttpResponse(content='{ "token" : '+ '"'+token+'"' +'}')
 				response.set_cookie(key='sessionid', value=session)
-				logout(request)
 				return response
 			else :
 				return HttpResponse("NO_ACCOUNT")
 		else :
 			return HttpResponse("NO_POST")
-	return HttpResponse("Veuillez vous déconnecter")
+	logout(request)
+	return HttpResponse("Vous êtes déjà connecté, veuillez vous re-login")
 
 
 def api_projects(request, token):
@@ -468,124 +470,127 @@ def api_projects(request, token):
 @csrf_exempt
 def api_upload(request, token, project_key):
 	if request.method == 'POST' :
-		if request.POST['files'] :
-			list_picts = request.POST['files']
-			error = []
-			for hashe in list_picts:
-				new_document = File.objects.create()
-				try:
-					new_document.document = base64.b64decode(hashe)
-				except Exception as e:
-					error.append("La "+str(list_picts.index(hashe))+" ème image est corrompue ou mal encodée. Veuillez recommencer")
-					continue
-				new_document.projet_key = project_key
-				new_document.typeName = "photos"
-				try:
-					new_document.uploaded_by = CustomUser.objects.get(api_token=request.user).username
-				except Exception as e:
-					return HttpResponse("Le token a expiré, veuillez recommencer")
-				original_name = "upload_"+str(get_random_string(5))
-				new_document.original_name = original_name
-				new_document.extension = new_document.get_extension()
-				new_document.key = get_random_string(length=32)
-				new_document.save()
-			if len(error) != 0 :
-				http_response = ""
-				for erreur in error :
-					http_response = http_response + erreur + "<br />"
-				return HttpResponse(http_response)
-			return HttpResponse('Les photos ont bien été uploadées.')
-		else : 
-			return HttpResponse('NO_FILES')
+		body = request.body
+		body_decoded = body.decode('utf8')
+		data_json = json.loads(body_decoded)
+		list_picts = data_json['files']
+		error = []
+		for data in list_picts:
+			new_original_name = "upload_"+str(get_random_string(5))+"."+get_extension_pic(data)
+			new_key = get_random_string(length=32)
+			image_name_bdd = new_key+"."+get_extension_pic(data)
+			try:
+				hashe = get_hash(data)
+				decoded = base64.b64decode(hashe)
+				new_doc = InMemoryUploadedFile(ContentFile(decoded), None, new_original_name, 'image/'+get_extension_pic(data), ContentFile(decoded).tell, None)
+			except Exception as e:
+				error.append("La "+str(list_picts.index(data)+1)+"è image importée est corrompue ou mal encodée. ")
+				continue
+			new_projet_key = project_key
+			new_typeName = "photos"
+			try:
+				new_uploaded_by = CustomUser.objects.get(api_token=token).username
+			except Exception as e:
+				return HttpResponse("Le token a expiré, veuillez recommencer")
+			new_document = Files.objects.create(document=new_doc,typeName=new_typeName,projet_key=project_key,uploaded_by=new_uploaded_by,original_name=new_original_name,key=new_key)
+			new_document.extension = new_document.get_extension()
+			new_document.save()
+		if len(error) != 0 :
+			http_response = ""
+			for erreur in error :
+				http_response = http_response + erreur
+			http_response = http_response + "Veuillez recommencer."
+			return HttpResponse(http_response)
+		return HttpResponse('Les photos ont bien été uploadées.')
 	else :
 		return HttpResponse('NO_POST')
 
 
 def about(request):
-    """
-    Affiche la page a propos.
-    """
-    return render(request, 'about.html',{})
+	"""
+	Affiche la page a propos.
+	"""
+	return render(request, 'about.html',{})
 def getAllYear(year,uidb32,date_projet):
-    r={}
-    for i in range(0,len(year)):
-        m=0
-        yea={}
-        d=0
-        date = time.mktime(datetime.strptime(str(year[i]) + '-01-01', "%Y-%m-%d").timetuple())
-        last_of_the_year = time.mktime(datetime.strptime(str(year[i]) + '-12-31', "%Y-%m-%d").timetuple())
-        while date <= last_of_the_year:
-            y = datetime.fromtimestamp(date).year
-            if m !=datetime.fromtimestamp(date).month:
-                month={}
-            m = datetime.fromtimestamp(date).month
-            if d !=datetime.fromtimestamp(date).day:
-                couleur={}
-            d = datetime.fromtimestamp(date).day
-            w = datetime.fromtimestamp(date).weekday()
-            c = define_color_event(date,uidb32)
-            couleur[w] = c
-            month[d] = couleur
-            yea[m]=month
-            r[y]=yea
-            date =date+24*3600
-    return r
+	r={}
+	for i in range(0,len(year)):
+		m=0
+		yea={}
+		d=0
+		date = time.mktime(datetime.strptime(str(year[i]) + '-01-01', "%Y-%m-%d").timetuple())
+		last_of_the_year = time.mktime(datetime.strptime(str(year[i]) + '-12-31', "%Y-%m-%d").timetuple())
+		while date <= last_of_the_year:
+			y = datetime.fromtimestamp(date).year
+			if m !=datetime.fromtimestamp(date).month:
+				month={}
+			m = datetime.fromtimestamp(date).month
+			if d !=datetime.fromtimestamp(date).day:
+				couleur={}
+			d = datetime.fromtimestamp(date).day
+			w = datetime.fromtimestamp(date).weekday()
+			c = define_color_event(date,uidb32)
+			couleur[w] = c
+			month[d] = couleur
+			yea[m]=month
+			r[y]=yea
+			date =date+24*3600
+	return r
 
 def define_color_event(date,projet_key):
-    datesProjet = Event.objects.all().filter(projet_key=projet_key)
-    couleur="B"
-    for i in datesProjet:
-        date_debut_Projecti = i.date_debut.timestamp()
-        date_fin_Projecti = i.date_fin.timestamp()
-        if date_debut_Projecti <= date and date_fin_Projecti >= date:            
-            if i.type_event == "En Travaux":
-                couleur = "R"
-            elif i.type_event == "Loué":
-                couleur = "V"
-            elif i.type_event == "En cours de reservation":
-                couleur = "O"
-            else:
-                couleur = "B"
-            return couleur
-    return couleur
+	datesProjet = Event.objects.all().filter(projet_key=projet_key)
+	couleur="B"
+	for i in datesProjet:
+		date_debut_Projecti = i.date_debut.timestamp()
+		date_fin_Projecti = i.date_fin.timestamp()
+		if date_debut_Projecti <= date and date_fin_Projecti >= date:            
+			if i.type_event == "En Travaux":
+				couleur = "R"
+			elif i.type_event == "Loué":
+				couleur = "V"
+			elif i.type_event == "En cours de reservation":
+				couleur = "O"
+			else:
+				couleur = "B"
+			return couleur
+	return couleur
 
 def event(request,uidb32):
-    if request.user.is_authenticated():
-        if request.user.typeUser=='Professionnel':      
-            if request.method == "POST":
-                form = EventForm(request.POST)
-                if form.is_valid():
-                    event = form.save(commit=False)
-                    if event.check_date_event(uidb32,event.date_debut,event.date_fin):
-                        event.projet_key=uidb32
-                        event.type_event='En Travaux'
-                        event.save()
-                        form= EventForm()
-                        information = "L'evenement a bien été rajouté"
-                        render(request, 'about.html',{'form': form,'information':information})
-                    else:
-                        form = EventForm()
-                        information = "Les dates sont dejà prises"
-                        render(request, 'about.html',{'form': form,'information': information})
-            else:
-                form = EventForm()
-                information = ""
-            date_projet = Event.objects.all().filter(projet_key=uidb32)
-            year = []
-            debut_year = date_projet[0].date_debut.year
-            fin_year = date_projet[0].date_fin.year
-            for i in range(0,len(date_projet)-1):
-                if debut_year not in year:
-                    year.append(debut_year)
-                debut_year = date_projet[i].date_debut.year
-                if fin_year not in year:
-                    year.append(fin_year)
-                fin_year = date_projet[i].date_fin.year
+	if request.user.is_authenticated():
+		if request.user.typeUser=='Professionnel':      
+			if request.method == "POST":
+				form = EventForm(request.POST)
+				if form.is_valid():
+					event = form.save(commit=False)
+					if event.check_date_event(uidb32,event.date_debut,event.date_fin):
+						event.projet_key=uidb32
+						event.type_event='En Travaux'
+						event.save()
+						form= EventForm()
+						information = "L'evenement a bien été rajouté"
+						render(request, 'about.html',{'form': form,'information':information})
+					else:
+						form = EventForm()
+						information = "Les dates sont dejà prises"
+						render(request, 'about.html',{'form': form,'information': information})
+			else:
+				form = EventForm()
+				information = ""
+			date_projet = Event.objects.all().filter(projet_key=uidb32)
+			year = []
+			debut_year = date_projet[0].date_debut.year
+			fin_year = date_projet[0].date_fin.year
+			for i in range(0,len(date_projet)-1):
+				if debut_year not in year:
+					year.append(debut_year)
+				debut_year = date_projet[i].date_debut.year
+				if fin_year not in year:
+					year.append(fin_year)
+				fin_year = date_projet[i].date_fin.year
 
-            tabYear = getAllYear(year,uidb32,date_projet)
+			tabYear = getAllYear(year,uidb32,date_projet)
 
-            return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear})
-        else:
-            return redirect('project',uidb32=uidb32)
-    else:
-        return redirect('home')
+			return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear})
+		else:
+			return redirect('project',uidb32=uidb32)
+	else:
+		return redirect('home')
