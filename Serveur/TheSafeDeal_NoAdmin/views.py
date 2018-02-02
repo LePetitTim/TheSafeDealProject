@@ -467,7 +467,7 @@ def api_projects(request, token):
 
 @csrf_exempt
 def api_upload(request, token, project_key):
-	if request.POST :
+	if request.method == 'POST' :
 		if request.POST['files'] :
 			list_picts = request.POST['files']
 			error = []
@@ -477,6 +477,7 @@ def api_upload(request, token, project_key):
 					new_document.document = base64.b64decode(hashe)
 				except Exception as e:
 					error.append("La "+str(list_picts.index(hashe))+" ème image est corrompue ou mal encodée. Veuillez recommencer")
+					continue
 				new_document.projet_key = project_key
 				new_document.typeName = "photos"
 				try:
