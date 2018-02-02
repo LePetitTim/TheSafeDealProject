@@ -458,14 +458,12 @@ def api_token(request):
 
 def api_projects(request, token):
 	users = CustomUser.objects.all()
-	for user in users :
-		if user.api_token == token :
-			utilisateur = CustomUser.objects.get(api_token = token)
-			projects = utilisateur.get_validated_projects_list()[0]
-			return HttpResponse(stringify_projects_list(projects))
-		else:
-			return HttpResponse('Aucun compte trouvé pour ce token')
-
+	if CustomUser.objects.filter(api_token = token).exists():
+		utilisateur = CustomUser.objects.get(api_token = token)
+		projects = utilisateur.get_validated_projects_list()[0]
+		return HttpResponse(stringify_projects_list(projects))
+	else:
+		return HttpResponse('Aucun compte trouvé pour ce token')
 
 @csrf_exempt
 def api_upload(request, token, project_key):
