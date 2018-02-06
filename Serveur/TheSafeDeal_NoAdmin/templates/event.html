@@ -18,6 +18,7 @@
 				$('#month'+month).slideDown();
 				$('.months a').removeClass('active'); 
 				$('.months a#linkMonth'+month).addClass('active'); 
+				$('.code_couleur').slideDown();
 				current = month;
 			}
 	   });
@@ -30,6 +31,7 @@
 				$('.years button').removeClass('active');
 				$('.years button#linkYear'+year).addClass('active');
 				$('.month').hide();
+				$('.code_couleur').hide();
 				currentY=year;
 			}
 			return false;
@@ -90,6 +92,25 @@
 						<li><a href="#" id="linkMonth{{ key2 }}{{ key }}">{{ key2|to_month }}</a></li>
 					{% endfor %}
 				</ul>
+				<table class="code_couleur" id="code_couleur" style="position:absolute;left:40%;margin-bottom: 20px;background-color: white;vertical-align: top;display: inline-block;display:none">
+					<tr>
+						<th><img class="carre" src="{% static 'img/red_square.jpg' %}"/></th>
+						<th>En travaux</th>
+					</tr>
+					<tr>
+						<th><img class="carre" src="{% static 'img/orange_square.jpg' %}"/></th>
+						<th>En cours de réservation</th>
+					</tr>
+					<tr>
+						<th><img class="carre" src="{% static 'img/green_square.jpg' %}"/></th>
+						<th>Réservé</th>
+					</tr>
+					<tr>
+						<th><img class="carre" src="{% static 'img/white_square.jpg' %}"/></th>
+						<th>Disponible</th>
+					</tr>
+					
+				</table>
 			</div>
 			{% for key2, value2 in value.items %}
 				<div class="month" id="month{{ key2 }}{{ key }}">
@@ -130,27 +151,6 @@
 			{% endfor %}
 		</div>
 {% endfor %}
-
-
-<table style="position:absolute;top:58%;left:40%;margin-bottom: 20px;background-color: white;vertical-align: top;">
-	<tr>
-		<th><img class="carre" src="{% static 'img/red_square.jpg' %}"/></th>
-		<th>En travaux</th>
-	</tr>
-	<tr>
-		<th><img class="carre" src="{% static 'img/orange_square.jpg' %}"/></th>
-		<th>En cours de réservation</th>
-	</tr>
-	<tr>
-		<th><img class="carre" src="{% static 'img/green_square.jpg' %}"/></th>
-		<th>Réservé</th>
-	</tr>
-	<tr>
-		<th><img class="carre" src="{% static 'img/white_square.jpg' %}"/></th>
-		<th>Disponible</th>
-	</tr>
-	
-</table>
 
 
 {% endblock %}

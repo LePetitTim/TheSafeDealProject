@@ -71,6 +71,11 @@ th {
     color: white;
 }
 
+.month {
+    vertical-align: top;
+    width: 50%;
+}
+
 .projet {
     background-color: white;
     height: auto; 
