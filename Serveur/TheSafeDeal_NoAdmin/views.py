@@ -539,7 +539,7 @@ def define_color_event(date,projet_key):
 	couleur="B"
 	for i in datesProjet:
 		date_debut_Projecti = i.date_debut.timestamp()
-		date_fin_Projecti = i.date_fin.timestamp()
+		date_fin_Projecti = i.date_fin.timestamp()+3600*24
 		if date_debut_Projecti <= date and date_fin_Projecti >= date:            
 			if i.type_event == "En Travaux":
 				couleur = "R"
@@ -582,26 +582,30 @@ def event(request,uidb32):
             information = ""
         date_projet = Event.objects.all().filter(projet_key=uidb32)
         year = []
-        debut_year = date_projet[0].date_debut.year
-        fin_year = date_projet[0].date_fin.year
-        for i in range(0,len(date_projet)-1):
-            if debut_year not in year:
-                year.append(debut_year)
-            debut_year = date_projet[i].date_debut.year
-            if fin_year not in year:
-                year.append(fin_year)
-            fin_year = date_projet[i].date_fin.year
-
-        tabYear = getAllYear(year,uidb32,date_projet)
-        if request.user.typeUser=='Professionnel':
-            date_projet_a_reserver=date_projet.filter(type_event="En cours de reservation")
-            return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'reserver':date_projet_a_reserver})
-        elif request.user.typeUser=='Client':
-            date_projet_loue=date_projet.filter(type_event="Loué")
-            date_projet_a_reserver=date_projet.filter(type_event="En cours de reservation")
-            return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'loue':date_projet_loue,'reserver':date_projet_a_reserver})
+        if date_projet.count()!=0:
+            debut_year = date_projet[0].date_debut.year
+            fin_year = date_projet[0].date_fin.year
+            for i in range(0,len(date_projet)):
+                if debut_year not in year:
+                    year.append(debut_year)
+                debut_year = date_projet[i].date_debut.year
+                if fin_year not in year:
+                    year.append(fin_year)
+                fin_year = date_projet[i].date_fin.year
+            tabYear = getAllYear(year,uidb32,date_projet)
+            if request.user.typeUser=='Professionnel':
+                date_projet_a_reserver=date_projet.filter(type_event="En cours de reservation")
+                return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'reserver':date_projet_a_reserver})
+            elif request.user.typeUser=='Client':
+                date_projet_loue=date_projet.filter(type_event="Loué")
+                date_projet_a_reserver=date_projet.filter(type_event="En cours de reservation")
+                return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'loue':date_projet_loue,'reserver':date_projet_a_reserver})
+            else:
+                return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear})
         else:
-            return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear})
+            #Changer 2018 par la valeur dynamique de l'année actuelle, si besoin.
+            tabYear=getAllYear([2018],uidb32,date_projet)            
+            return render(request, 'event.html',{'form': form,'information': information,'tabYear':tabYear})        
     else:
         return redirect('home')
 

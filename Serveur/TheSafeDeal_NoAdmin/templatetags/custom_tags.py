@@ -1,4 +1,6 @@
 from django import template
+import time
+from datetime import datetime 
 register = template.Library()
 
 @register.filter()
@@ -18,6 +20,7 @@ def replace_colour(value):
 		return "#FFFFFF"
 @register.filter
 def get_item(dictionary):
-    return next(iter(dictionary))
-
-
+    if dictionary!={}:
+        return next(iter(dictionary))
+    else:
+        return dictionary

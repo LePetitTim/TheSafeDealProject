@@ -58,8 +58,8 @@
 	<h2>En cours de validation</h2>
 {% endif %}
 {% for i in reserver %}
-	{{ i.date_debut.date }} - 
-	{{ i.date_fin.date }}
+	{{ i.date_debut }}- 
+	{{ i.date_fin }}
 	{% if user.typeUser == 'Professionnel' %}
 	<a href="{% url 'add_event' uidb32=i.projet_key id=i.id %}">Valider</a>
 	{% endif %}
@@ -112,7 +112,8 @@
 										{% if key3 == 1 %}
 											{% if key3 != key4|add:1 %}
 												<td colspan="{{ key4 }}"></td>
-										{% endif %}{% endif %}
+											{% endif %}
+										{% endif %}
 										<td bgcolor="{{ value4|replace_colour }}">
 											<div class="relative">
 												<div class="day">{{ key3 }}</div>
