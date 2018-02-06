@@ -553,56 +553,55 @@ def define_color_event(date,projet_key):
 	return couleur
 
 def event(request,uidb32):
-    if request.user.is_authenticated():
-        if request.user.typeUser=='Professionnel' or request.user.typeUser=='Client':      
-            if request.method == "POST":
-                form = EventForm(request.POST)
-                if form.is_valid():
-                    event = form.save(commit=False)
-                    if event.check_date_event(uidb32,event.date_debut,event.date_fin):
-                        if request.user.typeUser=='Client':
-                            event.projet_key=uidb32
-                            event.type_event='En cours de reservation'
-                            event.save()
-                            form= EventForm()
-                            information = "L'evenement a bien été rajouté, il faut attendre la validation du professionnel"
-                            render(request, 'about.html',{'form': form,'information':information})
-                        else:
-                            event.projet_key=uidb32
-                            event.type_event='En Travaux'
-                            event.save()
-                            form= EventForm()
-                            information = "L'evenement a bien été rajouté"
-                            render(request, 'about.html',{'form': form,'information':information})
+    if request.user.is_authenticated():     
+        if request.method == "POST":
+            form = EventForm(request.POST)
+            if form.is_valid():
+                event = form.save(commit=False)
+                if event.check_date_event(uidb32,event.date_debut,event.date_fin):
+                    if request.user.typeUser=='Client':
+                        event.projet_key=uidb32
+                        event.type_event='En cours de reservation'
+                        event.save()
+                        form= EventForm()
+                        information = "L'evenement a bien été rajouté, il faut attendre la validation du professionnel"
+                        render(request, 'about.html',{'form': form,'information':information})
                     else:
-                        form = EventForm()
-                        information = "Les dates sont dejà prises"
-                        render(request, 'about.html',{'form': form,'information': information})
-            else:
-                form = EventForm()
-                information = ""
-            date_projet = Event.objects.all().filter(projet_key=uidb32)
-            year = []
-            debut_year = date_projet[0].date_debut.year
-            fin_year = date_projet[0].date_fin.year
-            for i in range(0,len(date_projet)-1):
-                if debut_year not in year:
-                    year.append(debut_year)
-                debut_year = date_projet[i].date_debut.year
-                if fin_year not in year:
-                    year.append(fin_year)
-                fin_year = date_projet[i].date_fin.year
-
-            tabYear = getAllYear(year,uidb32,date_projet)
-            if request.user.typeUser=='Professionnel':
-                date_projet_a_reserver=date_projet.filter(type_event="En cours de reservation")
-                return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'reserver':date_projet_a_reserver})
-            else:
-                date_projet_loue=date_projet.filter(type_event="Loué")
-                date_projet_a_reserver=date_projet.filter(type_event="En cours de reservation")
-                return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'loue':date_projet_loue,'reserver':date_projet_a_reserver})
+                        event.projet_key=uidb32
+                        event.type_event='En Travaux'
+                        event.save()
+                        form= EventForm()
+                        information = "L'evenement a bien été rajouté"
+                        render(request, 'about.html',{'form': form,'information':information})
+                else:
+                    form = EventForm()
+                    information = "Les dates sont dejà prises"
+                    render(request, 'about.html',{'form': form,'information': information})
         else:
-            return redirect('project',uidb32=uidb32)
+            form = EventForm()
+            information = ""
+        date_projet = Event.objects.all().filter(projet_key=uidb32)
+        year = []
+        debut_year = date_projet[0].date_debut.year
+        fin_year = date_projet[0].date_fin.year
+        for i in range(0,len(date_projet)-1):
+            if debut_year not in year:
+                year.append(debut_year)
+            debut_year = date_projet[i].date_debut.year
+            if fin_year not in year:
+                year.append(fin_year)
+            fin_year = date_projet[i].date_fin.year
+
+        tabYear = getAllYear(year,uidb32,date_projet)
+        if request.user.typeUser=='Professionnel':
+            date_projet_a_reserver=date_projet.filter(type_event="En cours de reservation")
+            return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'reserver':date_projet_a_reserver})
+        elif request.user.typeUser=='Client':
+            date_projet_loue=date_projet.filter(type_event="Loué")
+            date_projet_a_reserver=date_projet.filter(type_event="En cours de reservation")
+            return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'loue':date_projet_loue,'reserver':date_projet_a_reserver})
+        else:
+            return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear})
     else:
         return redirect('home')
 
