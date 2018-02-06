@@ -8,7 +8,7 @@
 	jQuery(function($){
 	   $('.year').hide();
 	   $('.year:first').show();	   
-	   $('.years a:first').addClass('active');
+	   $('.years button:first').addClass('active');
 	   $('.month').hide();
 	   var current = 0{{ tabYear|get_item }};
 	   $('.months a').click(function(){
@@ -22,13 +22,13 @@
 			}
 	   });
 	   var currentY = {{ tabYear|get_item }};
-	   $('.years a').click(function(){
+	   $('.years button').click(function(){
 			var year = $(this).attr('id').replace('linkYear','');
 			if(year != currentY){
 				$('#year'+currentY).slideUp();
 				$('#year'+year).slideDown();
-				$('.years a').removeClass('active');
-				$('.years a#linkYear'+year).addClass('active');
+				$('.years button').removeClass('active');
+				$('.years button#linkYear'+year).addClass('active');
 				$('.month').hide();
 				currentY=year;
 			}
@@ -37,7 +37,14 @@
 	});
 </script> 
 </head> 
+{% if user.typeUser == 'Professionnel' %}
+	<h3> Ajouter dates de travaux :</h3>
+{% endif %}
+{% if user.typeUser == 'Client' %}
 
+	<h3> Reserver :</h3>
+	
+{% endif %}
 {% if user.typeUser == 'Client' or user.typeUser == 'Professionnel' %}
 	<form method='post' style='width: auto'>
 	<p>{{ information }}</p>
@@ -73,7 +80,7 @@
 
 <div class="years">
 {% for key,value in tabYear.items %}
-	<a href="#" id="linkYear{{ key }}">{{ key }}</a>
+	<button href="#" id="linkYear{{ key }}" class="upload_document">{{ key }}</button>
 {% endfor %}
 </div>
 {% for key, value in tabYear.items %}
