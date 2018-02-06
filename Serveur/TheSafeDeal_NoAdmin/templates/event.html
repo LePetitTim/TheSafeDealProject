@@ -37,7 +37,12 @@
 	});
 </script> 
 </head> 
-
+{% if user.typeUser == 'Professionnel' %}
+	<h3> Ajouter dates de travaux :</h3>
+{% endif %}
+{% if user.typeUser == 'Client' %}
+	<h3> Reserver :</h3>
+{% endif %}
 {% if user.typeUser == 'Client' or user.typeUser == 'Professionnel' %}
 	<form method='post'>
 	<p>{{ information }}</p>
