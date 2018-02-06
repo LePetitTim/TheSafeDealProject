@@ -38,13 +38,15 @@
 </script> 
 </head> 
 
+{% if user.typeUser == 'Client' or user.typeUser == 'Professionnel' %}
+	<form method='post'>
+	<p>{{ information }}</p>
+		{% csrf_token %}
+		{{ form }}
+		<button>Ajouter</button>
+	</form>
+{% endif %}
 
-<form method='post'>
-<p>{{ information }}</p>
-	{% csrf_token %}
-	{{ form }}
-	<button>Importer</button>
-</form>
 {% if reserver|length != 0  %}
 	<h2>En cours de validation</h2>
 {% endif %}
