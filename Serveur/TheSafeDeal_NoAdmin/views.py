@@ -81,7 +81,7 @@ def register(request):
 			"""
 	else:
 		form = SignupForm()
-	return render(request, 'register.html', {'form': form})
+	return render(request, 'register.html', {'form': form, 'titre' : "S'enregistrer"})
 
 def activate(request, uidb64, token):
 	"""
@@ -124,7 +124,7 @@ def showProject(request, uidb32):
 			project = Projet.objects.get(key=uidb32)
 		else:
 			valide = "Le Projet n'existe pas."
-			return render(request, 'project.html',{'valide':valide})
+			return render(request, 'project.html',{'valide':valide, 'titre' : 'Deal with it'})
 
 		user = CustomUser.objects.all()
 		for i in user:
