@@ -19,3 +19,5 @@ def replace_colour(value):
 @register.filter
 def get_item(dictionary):
     return next(iter(dictionary))
+
+
