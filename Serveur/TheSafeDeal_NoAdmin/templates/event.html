@@ -80,11 +80,15 @@
 	{% endfor %}
 {% endif %}
 
+<a href="{% url 'project' uidb32=uidb32 %}"><button class="edit_contract">Retour au projet</button></a>
+
 <div class="years">
 {% for key,value in tabYear.items %}
 	<button href="#" id="linkYear{{ key }}" class="upload_document">{{ key }}</button>
 {% endfor %}
 </div>
+
+
 {% for key, value in tabYear.items %}
 		<div class="year" id="year{{ key }}">
 			<div class="months">

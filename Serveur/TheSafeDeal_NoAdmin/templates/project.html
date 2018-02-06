@@ -106,7 +106,11 @@
 		 <td title='{{ projet.description }}'>{{ projet.description|truncatechars:20 }}</td>
 		</tr>
 		<th>Etat</th>
+		{% if state is not None %}
 		 <td><strong>{{ state }}</strong></td>
+		{% else %}
+		 <td><strong>En cours</strong></td>
+		{% endif %}
 		</tr>
 	</table>
 

@@ -565,18 +565,18 @@ def event(request,uidb32):
                         event.save()
                         form= EventForm()
                         information = "L'evenement a bien été rajouté, il faut attendre la validation du professionnel"
-                        render(request, 'about.html',{'form': form,'information':information})
+                        render(request, 'about.html',{'form': form,'information':information, 'uidb32' : uidb32})
                     else:
                         event.projet_key=uidb32
                         event.type_event='En Travaux'
                         event.save()
                         form= EventForm()
                         information = "L'evenement a bien été rajouté"
-                        render(request, 'about.html',{'form': form,'information':information})
+                        render(request, 'about.html',{'form': form,'information':information, 'uidb32' : uidb32})
                 else:
                     form = EventForm()
                     information = "Les dates sont dejà prises"
-                    render(request, 'about.html',{'form': form,'information': information})
+                    render(request, 'about.html',{'form': form,'information': information, 'uidb32' : uidb32})
         else:
             form = EventForm()
             information = ""
@@ -595,17 +595,17 @@ def event(request,uidb32):
             tabYear = getAllYear(year,uidb32,date_projet)
             if request.user.typeUser=='Professionnel':
                 date_projet_a_reserver=date_projet.filter(type_event="En cours de reservation")
-                return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'reserver':date_projet_a_reserver})
+                return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'reserver':date_projet_a_reserver, 'uidb32' : uidb32})
             elif request.user.typeUser=='Client':
                 date_projet_loue=date_projet.filter(type_event="Loué")
                 date_projet_a_reserver=date_projet.filter(type_event="En cours de reservation")
-                return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'loue':date_projet_loue,'reserver':date_projet_a_reserver})
+                return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear,'loue':date_projet_loue,'reserver':date_projet_a_reserver, 'uidb32' : uidb32})
             else:
-                return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear})
+                return render(request, 'event.html',{'form': form,'information': information,'dates':date_projet,'tabYear':tabYear, 'uidb32' : uidb32})
         else:
             #Changer 2018 par la valeur dynamique de l'année actuelle, si besoin.
             tabYear=getAllYear([2018],uidb32,date_projet)            
-            return render(request, 'event.html',{'form': form,'information': information,'tabYear':tabYear})        
+            return render(request, 'event.html',{'form': form,'information': information,'tabYear':tabYear, 'uidb32' : uidb32})        
     else:
         return redirect('home')
 
