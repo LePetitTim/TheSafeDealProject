@@ -11,12 +11,12 @@
 	{% csrf_token %}
 <center>	
 	{% if form != Null %}
-		<h1>Create a new contract :</h1>
+		<h1>Creer un nouveau contrat :</h1>
 		{% for field in form %}		
 			<p><strong>{{ field.label_tag }}</strong></p>
 			<p>{{ field }}</p>
 		{% endfor %}
-		<button type="submit" name="new" class="save btn btn-default">Save</button>
+		<button type="submit" name="new" class="save btn btn-default">Sauvegarder</button>
 	{% endif %}
 </center>
 
@@ -37,11 +37,11 @@
 				<button type="submit" name="download" class="save btn btn-default">Télécharger</button>
 			{% endif %}
 			{% if save == True %}
-				<button type="submit" name="edit" class="save btn btn-default">Edit</button>
-				<button type="submit" name="delete" class="save btn btn-default">Delete</button>
+				<button type="submit" name="edit" class="save btn btn-default">Editer</button>
+				<button type="submit" name="delete" class="save btn btn-default">Suprimer</button>
 			{% endif %}
 			{% if save == False %}
-				<button type="submit" name="edit" class="save btn btn-default">Save</button>
+				<button type="submit" name="edit" class="save btn btn-default">Sauvegarder</button>
 			{% endif %}
 		</td>
 		</tr>

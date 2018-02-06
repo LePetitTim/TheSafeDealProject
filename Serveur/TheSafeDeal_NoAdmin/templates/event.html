@@ -10,9 +10,7 @@
 	   $('.year:first').show();	   
 	   $('.years a:first').addClass('active');
 	   $('.month').hide();
-	   $('.month:first').show();
-	   $('.months a:first').addClass('active');
-	   var current = 1;
+	   var current = 0{{ tabYear|get_item }};
 	   $('.months a').click(function(){
 			var month = $(this).attr('id').replace('linkMonth','');
 			if(month != current){
@@ -26,12 +24,13 @@
 	   var currentY = {{ tabYear|get_item }};
 	   $('.years a').click(function(){
 			var year = $(this).attr('id').replace('linkYear','');
-			if(year != current){
-				$('#year'+current).slideUp();
+			if(year != currentY){
+				$('#year'+currentY).slideUp();
 				$('#year'+year).slideDown();
-				$('.years a ').removeClass('active');
+				$('.years a').removeClass('active');
 				$('.years a#linkYear'+year).addClass('active');
-				current=year;
+				$('.month').hide();
+				currentY=year;
 			}
 			return false;
 		});
@@ -46,20 +45,45 @@
 	{{ form }}
 	<button>Importer</button>
 </form>
-{% for key,value in tabYear.items %}
-	<div class="years"><a href="#" id="linkYear{{ key }}">{{ key }}</a></div>
+{% if reserver|length != 0  %}
+	<h2>En cours de validation</h2>
+{% endif %}
+{% for i in reserver %}
+	{{ i.date_debut.date }} - 
+	{{ i.date_fin.date }}
+	{% if user.typeUser == 'Professionnel' %}
+	<a href="{% url 'add_event' uidb32=i.projet_key id=i.id %}">Valider</a>
+	{% endif %}
+	<a href="{% url 'delete_event' uidb32=i.projet_key id=i.id %}">Supprimer</a>
+	</br>
 {% endfor %}
+{% if user.typeUser == 'Client' %}
+	{% if loue|length != 0  %}
+		<h2>Loué :</h2>
+	{% endif %}
+	{% for i in loue %}
+		{{ i.date_debut.date }} -
+		{{ i.date_fin.date }}
+		<a href="{% url 'delete_event' uidb32=i.projet_key id=i.id %}">Supprimer location</a>
+		</br>
+	{% endfor %}
+{% endif %}
 
+<div class="years">
+{% for key,value in tabYear.items %}
+	<a href="#" id="linkYear{{ key }}">{{ key }}</a>
+{% endfor %}
+</div>
 {% for key, value in tabYear.items %}
 		<div class="year" id="year{{ key }}">
 			<div class="months">
 				<ul>{% for key2, value2 in value.items %}
-						<li><a href="#" id="linkMonth{{ key2 }}">{{ key2|to_month }}</a></li>
+						<li><a href="#" id="linkMonth{{ key2 }}{{ key }}">{{ key2|to_month }}</a></li>
 					{% endfor %}
 				</ul>
 			</div>
 			{% for key2, value2 in value.items %}
-				<div class="month" id="month{{ key2 }}">
+				<div class="month" id="month{{ key2 }}{{ key }}">
 					<table>
 						<thead>
 							<tr>

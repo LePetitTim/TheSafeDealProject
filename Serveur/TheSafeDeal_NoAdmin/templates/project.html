@@ -7,6 +7,13 @@
 <center><strong>{{ valide }}</strong></center>
 {% endif %}
 
+{% if user.is_authenticated and user.username == nameProfessionnel or user.username == namePrestataire or user.username == nameClient %}
+<div>
+	<form action="/project/{{ projet.key }}/event" style="margin: 0px;">
+		<button class="edit_contract">Emploi du temps</button>
+	</form>
+</div>
+{% endif %}
 
 	{% if user.typeUser == 'Professionnel' and user.username == nameProfessionnel %}
 		<div>
@@ -14,6 +21,7 @@
 				<button class="edit_contract">Editer contrat</button>
 			</form>
 		</div>
+			
 	{% endif %}
 	{% if user.typeUser == 'Client' and user.username == nameClient %}
 		<div>
@@ -173,21 +181,6 @@ rows.forEach(function(row){
 
 		{% endfor %}
 	</table>
-
-	<table>
-	<tr>
-	<th>Lun</th>
-	<th>Mar</th>
-	<th>Mer</th>
-	<th>Jeu</th>
-	<th>Ven</th>
-	<th>Sam</th>
-	<th>Dim</th>
-	</tr>
-	<tr>
-	</tr>
-	</table>
-
 {% endif %}
 
 
