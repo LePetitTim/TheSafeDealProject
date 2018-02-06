@@ -539,7 +539,7 @@ def define_color_event(date,projet_key):
 	couleur="B"
 	for i in datesProjet:
 		date_debut_Projecti = i.date_debut.timestamp()
-		date_fin_Projecti = i.date_fin.timestamp()+3600*24
+		date_fin_Projecti = i.date_fin.timestamp()
 		if date_debut_Projecti <= date and date_fin_Projecti >= date:            
 			if i.type_event == "En Travaux":
 				couleur = "R"
