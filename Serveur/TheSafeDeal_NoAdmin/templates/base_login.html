@@ -4,13 +4,14 @@
         <meta charset="utf-8" />
         <link rel="stylesheet" href="{% static 'css/login.css' %}" />
 		<script type="text/javascript" src="{% static 'js/script.js' %}"></script>	
-        <title>Connexion</title>
+        <title>The Safe Deal</title>
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/logo_base.ico' %}" />
 </head>
 
 <body>
 
 <ul>
-  <li><img src="{% static 'img/logo.jpg' %}" title="Deal With It"></li>
+  <li><img src="{% static 'img/logo.jpg' %}" title="The Safe Deal"></li>
   <li><a href="{% url 'home' %}">Accueil</a></li>
   <li><a href="{% url 'about' %}">A propos</a></li>
   {% if user.is_authenticated %}
