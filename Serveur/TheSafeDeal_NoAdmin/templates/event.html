@@ -39,7 +39,7 @@
 </head> 
 
 {% if user.typeUser == 'Client' or user.typeUser == 'Professionnel' %}
-	<form method='post'>
+	<form method='post' style='width: auto'>
 	<p>{{ information }}</p>
 		{% csrf_token %}
 		{{ form }}
@@ -123,6 +123,27 @@
 			{% endfor %}
 		</div>
 {% endfor %}
+
+
+<table style="position:absolute;top:40%;left:40%;margin-bottom: 20px;background-color: white;vertical-align: top;">
+	<tr>
+		<th><img class="carre" src="{% static 'img/red_square.jpg' %}"/></th>
+		<th>En travaux</th>
+	</tr>
+	<tr>
+		<th><img class="carre" src="{% static 'img/orange_square.jpg' %}"/></th>
+		<th>En cours de réservation</th>
+	</tr>
+	<tr>
+		<th><img class="carre" src="{% static 'img/green_square.jpg' %}"/></th>
+		<th>Réservé</th>
+	</tr>
+	<tr>
+		<th><img class="carre" src="{% static 'img/white_square.jpg' %}"/></th>
+		<th>Disponible</th>
+	</tr>
+	
+</table>
 
 
 {% endblock %}
