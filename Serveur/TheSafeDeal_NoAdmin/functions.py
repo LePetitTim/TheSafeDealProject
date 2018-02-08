@@ -3,7 +3,7 @@
 from datetime import datetime, timezone
 from .models import *
 from django.conf import settings
-from PIL import Image
+#from PIL import Image
 
 
 # FONCTION QUI RETOURNE UNE LISTE DE DICTIONNAIRES, REPRESENTANT LES PROJETS

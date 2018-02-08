@@ -98,9 +98,10 @@ th {
     border-width: 2px;
     border-color: black;
     margin-top: 5%;
+    margin-bottom: 10%;
     border-radius: 20px;
     width: 50%;
-    height: 50%;
+    height: auto;
     padding: 10px 30px 10px 30px;
 }
 
